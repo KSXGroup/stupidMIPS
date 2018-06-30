@@ -16,6 +16,37 @@ public:
         delete data;
         data = nullptr;
     }
+
+    void insertWord(const int32_t &d){
+        byteOperator::setByte(data, position - 4, d);
+        position -= 4;
+    }
+    inline void insertHalf(const int16_t &d){
+        byteOperator::setHalf(data, position - 2, d);
+        position -= 2;
+    }
+    inline void insertBYTE(const int8_t &d){
+        byteOperator::setByte(data, position - 1, d);
+        position -= 1;
+    }
+    inline int32_t getWord(const OFFSETTYPE &pos){
+        return byteOperator::getWord(data, pos);
+    }
+    inline int16_t getHalf(const OFFSETTYPE &pos){
+        return byteOperator::getHalf(data, pos);
+    }
+    inline int8_t getByte(const OFFSETTYPE &pos){
+        return byteOperator::getByte(data, pos);
+    }
+    inline void setWord(const OFFSETTYPE &pos, const int32_t &d){
+        byteOperator::setByte(data, pos, d);
+    }
+    inline void setHalf(const OFFSETTYPE &pos, const int16_t &d){
+        byteOperator::setHalf(data, pos, d);
+    }
+    inline void setBYTE(const OFFSETTYPE &pos, const int8_t &d){
+        byteOperator::setByte(data, pos, d);
+    }
 };
 
 #endif

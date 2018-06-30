@@ -15,6 +15,7 @@ public:
         sourceCode = new char[codeLength + 1];
         fin.seekg(0, std::ios::beg);
         fin.read(sourceCode, codeLength);
+        sourceCode[codeLength] = '/0';
     }
 
     ~MIPSTextParser(){
