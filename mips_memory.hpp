@@ -2,9 +2,10 @@
 #define _MIPS_MEMORY_HPP_;
 #include "mips_define.h"
 class MIPSMemory{
+friend class byteOperator;
 private:
     BYTE *data;
-
+    OFFSETTYPE position = MAX_MEMORY_SIZE;
 public:
     MIPSMemory(){
         data = new BYTE[MAX_MEMORY_SIZE];

@@ -47,9 +47,8 @@ public:
         registerMapper["$31"] = registerMapper["$ra"] = 31;
         registerMapper["$lo"] = 32;
         registerMapper["$hi"] = 33;
-
-
     }
+
     ~MIPSRegister(){
         delete[] data;
         data = nullptr;
