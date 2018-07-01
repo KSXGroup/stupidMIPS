@@ -8,7 +8,7 @@ private:
     OFFSETTYPE staticPosition = 0;
     OFFSETTYPE dynamicPosition = 0;
     OFFSETTYPE textPosition = 0;
-public:
+public: 
     MIPSMemory(){
         data = new BYTE[MAX_MEMORY_SIZE];
         for(int i = 0; i < MAX_MEMORY_SIZE; ++i) BYTE[i] = 0;
