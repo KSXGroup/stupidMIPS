@@ -8,6 +8,7 @@ private:
     OFFSETTYPE staticPosition = 0;
     OFFSETTYPE dynamicPosition = 0;
     OFFSETTYPE textPosition = 0;
+    OFFSETTYPE stackPosition = 0;
 public:
     MIPSMemory(){
         data = new BYTE[MAX_MEMORY_SIZE];
@@ -19,7 +20,7 @@ public:
         data = nullptr;
     }
 
-    void insertWord(const int32_t &d){
+    /*void insertWord(const int32_t &d){
         byteOperator::setByte(data, position - 4, d);
         position -= 4;
     }
@@ -48,7 +49,7 @@ public:
     }
     inline void setBYTE(const OFFSETTYPE &pos, const int8_t &d){
         byteOperator::setByte(data, pos, d);
-    }
+    }*/
 };
 
 #endif

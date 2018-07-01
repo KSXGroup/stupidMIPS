@@ -6,9 +6,10 @@ class MIPSTextParser{
 private:
     char *sourceCode;
     uint32_t codeLength;
-    bool skipComment = 1;
+    const MIPSMapper *mapper = nullptr;
 public:
-    MIPSTextParser(const char *fileName){
+    MIPSTextParser(const char *fileName, const MIPSMapper &mapper){
+        //READ SOURCE FILE
         std::ifstream fin(fileName);
         fin.seekg(0, std::ios::end);
         codeLength = fin.tellg();
@@ -20,14 +21,6 @@ public:
 
     ~MIPSTextParser(){
         delete[] sourceCode;
-    }
-
-    inline void enableSkipComment(){
-        skipComment = 1;
-    }
-
-    inline void disableSkipComment(){
-        skipComment = 0;
     }
 
     void MIPSTextPreProcess(MIPSMemory &mem){}
