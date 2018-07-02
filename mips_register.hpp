@@ -8,7 +8,6 @@ class MIPSRegister{
 friend class byteOperator;
 private:
     BYTE *data;
-    static map<string, int> registerMapper;
 public:
     MIPSRegister(){
         data = new BYTE[35];

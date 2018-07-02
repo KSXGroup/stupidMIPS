@@ -13,9 +13,11 @@ const int MAX_MEMORY_SIZE = 1024 * 1024 * 4;
 using std::string;
 typedef char BYTE;
 typedef unsigned int OFFSETTYPE;
-const char TYPE_R = 0;
-const char TYPE_L = 1;
-const char TYPE_J = 2;
+const BYTE TYPE_R = 0;
+const BYTE TYPE_L = 1;
+const BYTE TYPE_J = 2;
+const BYTE STATUS_DATA = 3;
+const BYTE STATUS_TEXT = 4;
 
 enum INSTRUCTION{
     ADD = 0, ADDU, ADDIU, SUB, SUBU, MUL, MULU, DIV, DIVU, XOR, XORU, NEG, NEGU, REM, REMU,

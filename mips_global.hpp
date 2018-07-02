@@ -2,8 +2,7 @@
 #define _MIPS_GLOBAL_HPP_
 #include "mips_define.h"
 
-class instructionTemp{
-private:
+struct instructionTemp{
     INSTRUCTION name;
     int rs, rt, rd, shamt, funct, immediate, addressIdx;
 };
