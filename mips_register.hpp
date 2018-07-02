@@ -1,8 +1,6 @@
 #ifndef _MIPS_REGISTER_HPP_
 #define _MIPS_REGISTER_HPP_
-#include "mips_define.h"
-using std::map;
-using std::string;
+#include "mips_define.hpp"
 
 class MIPSRegister{
 friend class byteOperator;

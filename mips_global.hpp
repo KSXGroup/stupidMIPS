@@ -1,6 +1,6 @@
 #ifndef _MIPS_GLOBAL_HPP_
 #define _MIPS_GLOBAL_HPP_
-#include "mips_define.h"
+#include "mips_define.hpp"
 
 struct instructionTemp{
     INSTRUCTION name;
@@ -10,7 +10,7 @@ struct instructionTemp{
 class MIPSMapper{
 public:
     map<string, char> registerMapper, instructionMapper;
-    mapper(){
+    MIPSMapper(){
         registerMapper["$0"] = registerMapper["$zero"] = 0;
         registerMapper["$1"] = registerMapper["$at"] = 1;
         registerMapper["$2"] = registerMapper["$v0"] = 2;

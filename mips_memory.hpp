@@ -1,6 +1,6 @@
 #ifndef _MIPS_MEMORY_HPP_
-#define _MIPS_MEMORY_HPP_;
-#include "mips_define.h"
+#define _MIPS_MEMORY_HPP_
+#include "mips_define.hpp"
 class MIPSMemory{
 friend class byteOperator;
 private:
@@ -12,7 +12,7 @@ private:
 public:
     MIPSMemory(){
         data = new BYTE[MAX_MEMORY_SIZE];
-        for(int i = 0; i < MAX_MEMORY_SIZE; ++i) BYTE[i] = 0;
+        for(int i = 0; i < MAX_MEMORY_SIZE; ++i) data[i] = 0;
     }
 
     ~MIPSMemory(){
