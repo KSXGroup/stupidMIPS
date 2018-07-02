@@ -34,13 +34,17 @@ public:
 
     void MIPSTextToInstructionTemp(){
         int pos = 0;
-        tmpInstPtr = new instructionTemp;
+        BYTE needNew = 1;
         while(pos != codeLength){
             if(sourceCode[i] == ''){
                 pos++;
                 continue;
             }
+            if(sourceCode[i] == '.'){
+                needNew = 0;
+            }
         }
+        if(status == STATUS_DATA && needNew) tmpInstPtr = new instructionTemp;
     }
 
     void MIPSTextPreProcess(MIPSMemory &mem){
