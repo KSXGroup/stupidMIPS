@@ -266,6 +266,31 @@ public:
                         case DOTDATA:
                             status = STATUS_DATA;
                             break;
+                        //Rdest, Rsrc1, Src2 TYPE
+                        case ADD:
+                        case ADDU:
+                        case ADDIU:
+                        case SUB:
+                        case SUBU:
+                        case XOR:
+                        case REM:
+                        case REMU:
+                        case SEQ:
+                        case SGE:
+                        case SGT:
+                        case SLE:
+                        case SNE:
+                        //--TODO--
+                        //Rdes, Rsrc1, Src2 AND Rdest, Src2 TYPE
+                        case MUL:
+                        case MULU:
+                        case DIV:
+                        case DIVU:
+                            //TODO
+                        case NEG:
+                        case NEGU:
+                            //TODO
+                        case LI:
                         default:
                             break;
                     }
@@ -279,7 +304,11 @@ public:
 #ifdef STATIC_DATA_DEBUG
                 std::cerr << "[Dump Static Memory From Low To High]\n";
                 for(int32_t i = 0; i < mem.staticPosition; i+=4) std::cerr << mem.getWord(i) << ' ';
+                std::cerr << "\n";
+                std::cerr << "[Dump Data Labels In Code Squence]\n";
+                for(auto i = labelToAddress.begin(); i != labelToAddress.end(); ++i) std::cerr << i->first << " : "  << i -> second << "\n";
 #endif
+        mem.dynamicPosition = mem.staticPosition;
     }
 
 
