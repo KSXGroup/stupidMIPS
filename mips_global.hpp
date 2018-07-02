@@ -9,7 +9,8 @@ struct instructionTemp{
 
 class MIPSMapper{
 public:
-    map<string, char> registerMapper, instructionMapper;
+    map<std::string, char> registerMapper;
+    map<std::string, INSTRUCTION> instructionMapper;
     MIPSMapper(){
         registerMapper["$0"] = registerMapper["$zero"] = 0;
         registerMapper["$1"] = registerMapper["$at"] = 1;
@@ -95,6 +96,7 @@ public:
         instructionMapper["syscall"] = SYSCALL;
         instructionMapper[".ascii"] = DOTASCII;
         instructionMapper[".asciiz"] = DOTASCIIZ;
+        instructionMapper[".align"] = DOTALIGN;
         instructionMapper[".byte"] = DOTBYTE;
         instructionMapper[".half"] = DOTHALF;
         instructionMapper[".word"] = DOTWORD;
@@ -133,4 +135,38 @@ public:
     }
 };
 
+class byteConvert{
+    inline int32_t stringToInt32(const string &s){
+        int len = s.length(), pos = 0;
+        int32_t argtmp = 0;
+        while(pos < len && s[pos] == ' ') pos++;
+        while(pos < len && s[pos] >= '0'  && s[pos] <= '9'){
+            argtmp = argtmp * 10 + s[pos] - '0';
+            pos++;
+        }
+        return argtmp;
+    }
+
+    inline int16_t stringToInt16(const string &s){
+        int len = s.length(), pos = 0;
+        int16_t argtmp = 0;
+        while(pos < len && s[pos] == ' ') pos++;
+        while(pos < len && s[pos] >= '0'  && s[pos] <= '9'){
+            argtmp = argtmp * 10 + s[pos] - '0';
+            pos++;
+        }
+        return argtmp;
+    }
+
+    inline int8_t stringToInt8(const string &s){
+        int len = s.length(), pos = 0;
+        int8_t argtmp = 0;
+        while(pos < len && s[pos] == ' ') pos++;
+        while(pos < len && s[pos] >= '0'  && s[pos] <= '9'){
+            argtmp = argtmp * 10 + s[pos] - '0';
+            pos++;
+        }
+        return argtmp;
+    }
+};
 #endif

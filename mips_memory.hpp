@@ -49,7 +49,7 @@ public:
 
     inline void insertByteToHeap(const int8_t &d){
         byteOperator::setByte(data, dynamicPosition, d);
-        dynamicPosition += 1;pos
+        dynamicPosition += 1;
     }
 
     inline void insertWordToStack(const int32_t &d){

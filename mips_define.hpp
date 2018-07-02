@@ -1,5 +1,6 @@
 #ifndef _MIPS_DEFINE_H_
 #define _MIPS_DEFINE_H_
+#define STATIC_DATA_DEBUG
 #include <iostream>
 #include <fstream>
 #include <map>
@@ -27,6 +28,7 @@ enum INSTRUCTION{
     MOVE, MFHI, MFLO,
     NOP,
     SYSCALL,
+    DOTALIGN,
     DOTASCII, DOTASCIIZ, DOTBYTE, DOTHALF, DOTWORD,
     DOTSPACE,
     DOTDATA, DOTTEXT, DOTLABEL
