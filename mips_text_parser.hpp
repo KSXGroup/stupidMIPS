@@ -10,7 +10,7 @@ private:
     uint32_t codeLength = 0;
     uint32_t pos = 0;
     const MIPSMapper *mapper = nullptr;
-    BYTE status = 0;
+    BYTE status = STATUS_DATA;
     vector<instructionTemp*> inst;
     vector<int> idxToAddress;
     map<string, int> labelToIdx;
@@ -59,8 +59,8 @@ public:
         else return tmp;
     }
 
-    void MIPSTextToInstructionTemp(){
-        string tmpLine = "", tmpToken = "";
+    void MIPSTextPreProcess(MIPSMemory &mem){
+        string tmpLine = "", tmpToken = "", currentLabel = "";
         pos = 0;
         uint32_t linePos = 0, lineLength = 0;
         while(pos < codeLength){
@@ -69,13 +69,29 @@ public:
             lineLength = tmpLine.length();
             while(tmpLine[linePos] == ' ' || tmpLine[linePos] == '\t') linePos++;
             while(linePos < lineLength &&  tmpLine[linePos] != ' ' && tmpLine[linePos] != '\t') tmpToken += tmpLine[linePos++];
-
+            if(status == STATUS_DATA){
+                if(mapper->instructionMapper.count(tmpToken)){
+                    INSTRUCTION currentInst = mapper->instructionMapper[tmpToken];
+                    switch(currentInst){
+                        case DOTWORD:
+                        case DOTHALF:
+                        case DOTBYTE:
+                        case DOTASCII:
+                        case DOTASCIIZ:
+                        case DOTSPACE:
+                        default:
+                            cerr << "COMPILE ERROR";
+                            exit(0);
+                    }
+                }
+                else{
+                    //NEW LABEL
+                }
+            }
+            if(status == STATUS_TEXT){}
             linePos = 0;
             tmpToken = "";
         }
-    }
-
-    void MIPSTextPreProcess(MIPSMemory &mem){
     }
 
     void display(){
