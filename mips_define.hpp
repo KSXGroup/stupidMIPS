@@ -10,7 +10,7 @@ using std::vector;
 using std::map;
 typedef unsigned char BYTE;
 typedef unsigned int OFFSETTYPE;
-const int MAX_MEMORY_SIZE = 1024 * 1024 * 4;
+const unsigned int MAX_MEMORY_SIZE = 1024 * 1024 * 4;
 const BYTE TYPE_R = 0;
 const BYTE TYPE_L = 1;
 const BYTE TYPE_J = 2;
@@ -26,7 +26,10 @@ enum INSTRUCTION{
     SB, SH, SW,
     MOVE, MFHI, MFLO,
     NOP,
-    SYSCALL
+    SYSCALL,
+    DOTASCII, DOTASCIIZ, DOTBYTE, DOTHALF, DOTWORD,
+    DOTSPACE,
+    DOTDATA, DOTTEXT, DOTLABEL
 };
 
 #endif

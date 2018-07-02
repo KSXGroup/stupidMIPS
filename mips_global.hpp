@@ -93,6 +93,14 @@ public:
         instructionMapper["mflo"] = MFLO;
         instructionMapper["nop"] = NOP;
         instructionMapper["syscall"] = SYSCALL;
+        instructionMapper[".ascii"] = DOTASCII;
+        instructionMapper[".asciiz"] = DOTASCIIZ;
+        instructionMapper[".byte"] = DOTBYTE;
+        instructionMapper[".half"] = DOTHALF;
+        instructionMapper[".word"] = DOTWORD;
+        instructionMapper[".space"] = DOTSPACE;
+        instructionMapper[".data"] = DOTDATA;
+        instructionMapper[".text"] = DOTTEXT;
     }
 };
 

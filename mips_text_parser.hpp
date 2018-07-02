@@ -16,18 +16,17 @@ private:
     map<string, int> labelToIdx;
 
 public:
-    MIPSTextParser(const char *fileName, const MIPSMapper &map){
+    MIPSTextParser(const char *fileName, const MIPSMapper &mp){
         //READ SOURCE FILE
         std::ifstream fin(fileName);
         fin.seekg(0, std::ios::end);
         codeLength = fin.tellg();
-        std::cerr << codeLength;
         sourceCode = new char[codeLength + 1];
         fin.seekg(0, std::ios::beg);
         fin.read(sourceCode, codeLength);
         fin.close();
         sourceCode[codeLength] = '\0';
-        mapper = &map;
+        mapper = &mp;
     }
 
     ~MIPSTextParser(){
@@ -51,7 +50,7 @@ public:
     string peekNextLine(uint32_t st = 0){
         if(st == 0) st = pos;
         if(st == codeLength) return string();
-        string tmp = "";
+        string tmp = "";        std::cerr << codeLength;
         while(st < codeLength && sourceCode[st] == ' ') st++;
         while(st < codeLength && sourceCode[st] != '\n') tmp += sourceCode[st++];
         if(st >= codeLength) return string();
@@ -61,6 +60,19 @@ public:
     }
 
     void MIPSTextToInstructionTemp(){
+        string tmpLine = "", tmpToken = "";
+        pos = 0;
+        uint32_t linePos = 0, lineLength = 0;
+        while(pos < codeLength){
+            tmpLine = getNextLine();
+            linePos = 0;
+            lineLength = tmpLine.length();
+            while(tmpLine[linePos] == ' ' || tmpLine[linePos] == '\t') linePos++;
+            while(linePos < lineLength &&  tmpLine[linePos] != ' ' && tmpLine[linePos] != '\t') tmpToken += tmpLine[linePos++];
+
+            linePos = 0;
+            tmpToken = "";
+        }
     }
 
     void MIPSTextPreProcess(MIPSMemory &mem){
@@ -71,3 +83,24 @@ public:
     }
 };
 #endif
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
