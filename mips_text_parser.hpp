@@ -48,7 +48,7 @@ public:
     }
 
     string peekNextLine(uint32_t st = 0){
-        if(st == 0) st = pos;
+        if(st == 0) st = pos;                            while()
         if(st == codeLength) return string();
         string tmp = "";        std::cerr << codeLength;
         while(st < codeLength && sourceCode[st] == ' ') st++;
@@ -74,6 +74,16 @@ public:
                     INSTRUCTION currentInst = mapper->instructionMapper[tmpToken];
                     switch(currentInst){
                         case DOTWORD:
+                            vector<int32_t> arg;
+                            while(linePos < lineLength){
+                                int32_t argtmp = 0;
+                                while(linePos < lineLength && !(tmpLine[linePos] >= '0' && tmpLine[linePos] <= '9')) linePos++;
+                                while(linePos < lineLength && tmpLine[linePos] >= '0' && tmpLine[linePos] <= '9'){
+                                    argtmp = argtmp * 10 + tmpLine[linePos] - '0';
+                                    linePos++;
+                                }
+                                arg.push_back(argtmp);
+                            }
                         case DOTHALF:
                         case DOTBYTE:
                         case DOTASCII:
