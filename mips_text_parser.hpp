@@ -14,7 +14,8 @@ private:
     MIPSMapper mapper;
     BYTE status = STATUS_DATA;
     vector<instructionTemp*> inst;
-    map<string, int> labelToAddress, labelToLineNumber;
+    map<string, int> labelToAddress;
+    vector<string> labels;
 
 public:
     MIPSTextParser(const char *fileName, const MIPSMapper &mp){
@@ -59,21 +60,24 @@ public:
         else return tmp;
     }
 
+    inline uint8_t getLabelFromString(const string &s, uint8_t st, string &res){
+        res = "";
+        while(st < s.length() && (s[st] == ' ' || s[st] == '\t')) ++st;
+        while(st < s.length() && !(s[st] == ' ' || s[st] == '\t')) res += s[st++];
+        return st;
+    }
 
     inline uint8_t stringSkipForNumberAndRegister(const string &s, uint8_t st){
         while(1){
             if(st >= s.lenghth() || s[st] == '$' || (s[st] <= '9' && s[st] >= '0')) break;
             st++;
-        }                        Rdest = "";
-        Rsrc1 = "";
-        Src2 = "";
-        tmpPtr = new instructionTemp;
+        }
         return st;
     }
 
     inline uint8_t getNumberFromString(const string &s, uint8_t st, int16_t &res){
         string tmp = "";
-        while(s[st] >= '0' && s[st] <= '9') tmp += s[st++];
+        while(st < s.length() && s[st] >= '0' && s[st] <= '9') tmp += s[st++];
         res = byteConvert::stringToInt16(tmp);
         return st;
     }
@@ -83,7 +87,7 @@ public:
         else{
             res = "";
             res += '$';
-            while(st < s.length() && (s[st] != ' ' && s[st] != '\t')) res += s[st++];
+            while(st < s.length() && (s[st] != ' ' && s[st] != '\t' && s[st] != '\n')) res += s[st++];
             return st;
         }
     }
@@ -288,7 +292,7 @@ public:
             else if(status == STATUS_TEXT){
                 if(mapper.instructionMapper.count(tmpToken)){
                     INSTRUCTION currentInst = mapper.instructionMapper[tmpToken];
-                    string Rdest = "", Rsrc1 = "", Src2 = "", address = "", imm = "";
+                    string Rdest = "", Rsrc1 = "", Src2 = "", label = "";
                     instructionTemp *tmpPtr = nullptr;
                     switch(currentInst){
                         case DOTTEXT:
@@ -310,10 +314,7 @@ public:
                         case SGE:
                         case SGT:
                         case SLE:
-                                       //TODO             case SNE:
-                            Rdest = "";
-                            Rsrc1 = "";
-                            Src2 = "";
+                        case SNE:
                             tmpPtr = new instructionTemp;
                             tmpPtr->name = currentInst;
                             tmpPtr->argCount = 3;
@@ -351,9 +352,6 @@ public:
                         case MULU:
                         case DIV:
                         case DIVU:
-                            Rdest = "";
-                            Rsrc1 = "";
-                            Src2 = "";
                             tmpPtr = new instructionTemp;
                             tmpPtr->name = currentInst;
                             linePos = stringSkipForNumberAndRegister(tmpLine, linePos);
@@ -400,17 +398,51 @@ public:
                         case NEGU:
                         case MOVE:
                             new tmpPtr = new instructionTemp;
+                            tmpPtr->argCount = 2;
+                            tmpPtr->name = currentInst;
                             Rdest = Rsrc1 = "";
-
+                            linePos = stringSkipForNumberAndRegister(tmpLine, linePos);
+                            linePos = getRegisterFromString(tmpLine, linePos, Rdest);
+                            linePos = stringSkipForNumberAndRegister(tmpLine, linePos);
+                            linePos = getRegisterFromString(tmpLine, linePos, Rsrc1);
+                            tmpPtr->Rdest = mapper.registerMapper[Rdest];
+                            tmpPtr->Rsrc = mapper.registerMapper[Rdest];
+#ifdef TEXT_DEBUG
+                            cerr << "[" << tmpToken << "]:" ;
+                            cerr << "Rdest: $" << tmpPtr->Rdest << " ";
+                            cerr << "Rsrc1: $" << tmpPtr->Rsrc << " ";
+#endif
+                            inst.push_back(tmpPtr);
+                            tmpPtr = nullptr;
+                            break;
                         case LI:
-                            //TODO
+                            new tmpPtr = new instructionTemp;
+                            tmpPtr->argCount = 2;
+                            tmpPtr->srcType = 0;
+                            linePos = stringSkipForNumberAndRegister(tmpLine, linePos);
+                            linePos = getRegisterFromString(tmpLine, linePos, Rdest);
+                            linePos = stringSkipForNumberAndRegister(tmpLine, linePos);
+                            linePos = getNumberFromString(tmpLine, linePos, tmpPtr->Src);
+#ifdef TEXT_DEBUG
+                            cerr << "[" << tmpToken << "]:" ;
+                            cerr << "Rdest: $" << tmpPtr->Rdest << " ";
+                            cerr << "(immediate)Src" << tmpPtr->Src << " ";
+#endif
                         case BEQ:
                         case BNE:
                         case BGE:
                         case BLE:
                         case BGT:
                         case BLT:
-                            //TODO
+                            new tmpPtr = new instructionTemp;
+                            tmpPtr->argCount = 3;
+                            tmpPtr->name = currentInst;
+                            linePos = stringSkipForNumberAndRegister(tmpLine, linePos);
+                            linePos = getRegisterFromString(tmpLine, linePos, Rdest);
+                            tmpPtr->Rdest = mapper.registerMapper[Rdest];
+                            linePos = getLabelFromString(tmpLine, linePos, label);
+                            if(labelToAddress.count(label))
+                               //TODO
                         case BEQZ:
                         case BNEZ:
                         case BLEZ:
