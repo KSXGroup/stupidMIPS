@@ -5,6 +5,6 @@
 int main(){
         MIPSMapper mp;
         MIPSMemory mem;
-        MIPSTextParser p("MipsTest/testsuit-1/spill2-5100379110-daibo.s", mp);
+        MIPSTextParser p("MipsTest/testsuit-1/array_test1-mahaojun.s", mp);
         p.MIPSTextPreProcess(mem);
 }

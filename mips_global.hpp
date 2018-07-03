@@ -7,7 +7,7 @@ struct instructionTemp{
     char Rdest, Rsrc, argCount;
     int16_t Src;
     char srcType = 0; // 0 for immediate number, 1 for register
-    int32_t addressedLabel = 0; //label is translated to address(line number)
+    int32_t addressedLabel = -1; //label is translated to address(line number)
     int32_t offset = 0;
 };
 
@@ -140,7 +140,8 @@ public:
 };
 
 class byteConvert{
-    inline int32_t stringToInt32(const string &s){
+public:
+    inline static int32_t stringToInt32(const string &s){
         int len = s.length(), pos = 0;
         int32_t argtmp = 0;
         while(pos < len && s[pos] == ' ') pos++;
@@ -151,7 +152,7 @@ class byteConvert{
         return argtmp;
     }
 
-    inline int16_t stringToInt16(const string &s){
+    inline static int16_t stringToInt16(const string &s){
         int len = s.length(), pos = 0;
         int16_t argtmp = 0;
         while(pos < len && s[pos] == ' ') pos++;
@@ -162,7 +163,7 @@ class byteConvert{
         return argtmp;
     }
 
-    inline int8_t stringToInt8(const string &s){
+    inline static int8_t stringToInt8(const string &s){
         int len = s.length(), pos = 0;
         int8_t argtmp = 0;
         while(pos < len && s[pos] == ' ') pos++;
