@@ -399,9 +399,9 @@ public:
 #ifdef TEXT_DEBUG
                             cerr << "[" << tmpToken << "]:" ;
                             cerr << "Rdest: $" << (int)tmpPtr->Rdest << " ";
-                            if(tmpPtr->argCount == 3) cerr << "Rsrc1: $" << tmpPtr->Rsrc << " ";
+                            if(tmpPtr->argCount == 3) cerr << "Rsrc1: $" << (int)tmpPtr->Rsrc << " ";
                             cerr << "SrcType:" << ((tmpPtr->srcType == 1) ? "Register: $" : "ImmediateNumber:" );
-                            cerr << tmpPtr->Src << "\n";
+                            cerr << (int)tmpPtr->Src << "\n";
 #endif
                             inst.push_back(tmpPtr);
                             tmpPtr = nullptr;
@@ -655,6 +655,8 @@ public:
                 for(auto i = labelToAddress.begin(); i != labelToAddress.end(); ++i) std::cerr << i->first << " : "  << i -> second << "\n";
 #endif
         mem.dynamicPosition = mem.staticPosition;
+#define PARSED_DEBUG
+
     }
 
 
