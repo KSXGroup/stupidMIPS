@@ -7,7 +7,8 @@ struct instructionTemp{
     char Rdest, Rsrc, argCount;
     int16_t Src;
     char srcType = 0; // 0 for immediate number, 1 for register
-    uint32_t addressedLabel = 0; //label is translated to address(line number)
+    int32_t addressedLabel = 0; //label is translated to address(line number)
+    int32_t offset = 0;
 };
 
 class MIPSMapper{

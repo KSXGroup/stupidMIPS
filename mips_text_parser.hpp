@@ -14,7 +14,7 @@ private:
     MIPSMapper mapper;
     BYTE status = STATUS_DATA;
     vector<instructionTemp*> inst;
-    map<string, int> labelToAddress;
+    map<string, int32_t> labelToAddress, labelToIndex;
     vector<string> labels;
 
 public:
@@ -69,7 +69,7 @@ public:
 
     inline uint8_t stringSkipForNumberAndRegister(const string &s, uint8_t st){
         while(1){
-            if(st >= s.lenghth() || s[st] == '$' || (s[st] <= '9' && s[st] >= '0')) break;
+            if(st >= s.lenghth() || s[st] == '$' || (s[st] <= '9' && s[st] >= '0') ) break;
             st++;
         }
         return st;
@@ -77,17 +77,21 @@ public:
 
     inline uint8_t getNumberFromString(const string &s, uint8_t st, int16_t &res){
         string tmp = "";
+        bool ifMinus = 0;
+        if(s[st - 1] == '-') ifMinus = 1;
         while(st < s.length() && s[st] >= '0' && s[st] <= '9') tmp += s[st++];
         res = byteConvert::stringToInt16(tmp);
+        if(ifMinus) res = -res;
         return st;
     }
 
     inline uint8_t getRegisterFromString(const string &s, uint8_t st, string &res){
+        res = "";
         if(s[st] != '$') return st;
         else{
             res = "";
             res += '$';
-            while(st < s.length() && (s[st] != ' ' && s[st] != '\t' && s[st] != '\n')) res += s[st++];
+            while(st < s.length() && (s[st] != ' ' && s[st] != '\t' && s[st] != '\n' && s[st] != ')')) res += s[st++];
             return st;
         }
     }
@@ -287,7 +291,11 @@ public:
                             break;
                     }
                 }
-                else labelToAddress[tmpToken] = mem.staticPosition;
+                else{
+                    string tmpLabel = "";
+                    for(uint8_t i = 0; i < tmpToken.length() - 1; ++i) tmpLabel += tmpToken[i];
+                    labelToAddress[tmpLabel] = mem.staticPosition;
+                }
             }
             else if(status == STATUS_TEXT){
                 if(mapper.instructionMapper.count(tmpToken)){
@@ -434,45 +442,194 @@ public:
                         case BLE:
                         case BGT:
                         case BLT:
-                            new tmpPtr = new instructionTemp;
+                        if(labelToIndex.count(label)) tmpPtr->addressedLabel = labels[labelToIndex[label]];
+                        else{
+                            labels.push_back(label);
+                            labelToIndex[label] = labels.size() - 1;
+                            labelToAddress[label] = -1;
+                            tmpPtr->addressedLabel = -1;
+                        }tmpPtr = new instructionTemp;
                             tmpPtr->argCount = 3;
                             tmpPtr->name = currentInst;
                             linePos = stringSkipForNumberAndRegister(tmpLine, linePos);
                             linePos = getRegisterFromString(tmpLine, linePos, Rdest);
                             tmpPtr->Rdest = mapper.registerMapper[Rdest];
+                            linePos = stringSkipForNumberAndRegister(tmpLine, linePos);
+                            if(tmpLine[linePos] == '$'){
+                                linePos = getRegisterFromString(tmpLine, linePos, Rsrc1);
+                                tmpPtr->srcType = 1;
+                                tmpPtr->Src = mapper.registerMapper[Rsrc1];
+                            }
+                            else{
+                                tmpPtr->srcType = 0;
+                                linePos = getNumberFromString(tmpLine, linePos, tmpPtr->Src);
+                            }
                             linePos = getLabelFromString(tmpLine, linePos, label);
-                            if(labelToAddress.count(label))
-                               //TODO
+                            if(labelToIndex.count(label)) tmpPtr->addressedLabel = labels[labelToIndex[label]];
+                            else{
+                                labels.push_back(label);
+                                labelToIndex[label] = labels.size() - 1;
+                                labelToAddress[label] = -1;
+                                tmpPtr->addressedLabel = -1;
+                            }
+#ifdef TEXT_DEBUG
+                            cerr << "[" << tmpToken << "]:" ;
+                            cerr << "Rdest: $" << tmpPtr->Rdest << " ";
+                            cerr << "Src ";
+                            if(tmpPtr->srcType) cerr << "Register: $";
+                            else cerr << "Immediate:";
+                            cerr << tmpPtr->Src << " ";
+                            cerr << "Label Address: ";
+                            if(tmpPtr->addressedLabel == -1) cerr << "<NOT DECIDED YET>\n";
+                            else cerr << tmpPtr->addressedLabel << "\n";
+#endif
+                            inst.push_back(tmpPtr);
+                            tmpPtr = nullptr;
+                            break;
                         case BEQZ:
                         case BNEZ:
                         case BLEZ:
                         case BGEZ:
                         case BGTZ:
                         case BLTZ:
-                            //TODO
+                            tmpPtr = new instructionTemp;
+                            tmpPtr->argCount = 2;
+                            tmpPtr->name = currentInst;
+                            linePos = stringSkipForNumberAndRegister(tmpLine, linePos);
+                            linePos = getRegisterFromString(tmpLine, linePos, Rdest);
+                            tmpPtr->Rdest = mapper.registerMapper[Rdest];
+                            while(tmpLine[linePos] != ' ' || tmpLine[linePos] != '\t') ++linePos;
+                            linePos = getLabelFromString(tmpLine, linePos, label);
+                            if(labelToIndex.count(label)) tmpPtr->addressedLabel = labels[labelToIndex[label]];
+                            else{
+                                labels.push_back(label);
+                                labelToIndex[label] = labels.size() - 1;
+                                labelToAddress[label] = -1;
+                                tmpPtr->addressedLabel = -1;
+                            }
+#ifdef TEXT_DEBUG
+                            cerr << "[" << tmpToken << "]:" ;
+                            cerr << "Rdest: $" << tmpPtr->Rdest << " ";
+                            cerr << "Label Address: ";
+                            if(tmpPtr->addressedLabel == -1) cerr << "<NOT DECIDED YET>\n";
+                            else cerr << tmpPtr->addressedLabel << "\n";
+#endif
+                            inst.push_back(tmpPtr);
+                            tmpPtr = nullptr;
+                            break;
                         case JR:
                         case JALR:
                         case MFHI:
                         case MFLO:
-                            //TODO
+                             tmpPtr = new instructionTemp;
+                             tmpPtr->name = currentInst;
+                             tmpPtr->argCount = 1;
+                             linePos = stringSkipForNumberAndRegister(tmpLine, linePos);
+                             linePos = getRegisterFromString(tmpLine, linePos, Rsrc1);
+                             tmpPtr->Rsrc = mapper.registerMapper[Rsrc1];
+#ifdef TEXT_DEBUG
+                            cerr << "[" << tmpToken << "]:" ;
+                            cerr << "Rsrc: $" << tmpPtr->Rsrc << " ";
+#endif
+                            inst.push_back(tmpPtr);
+                            tmpPtr = nullptr;
+                            break;
+                        case B:
                         case J:
                         case JAL:
-                            //TODO
+                            tmpPtr = new instructionTemp;
+                            tmpPtr->name = currentInst;
+                            tmpPtr->argCount = 1;
+                            while(linePos < lineLength && (tmpLine[linePos] != ' ' || tmpLine[linePos] != '\t')) ++linePos;
+                            linePos = getLabelFromString(tmpLine, linePos, label);
+                            if(labelToIndex.count(label)) tmpPtr->addressedLabel = labels[labelToIndex[label]];
+                            else{
+                                labels.push_back(label);
+                                labelToIndex[label] = labels.size() - 1;
+                                labelToAddress[label] = -1;
+                                tmpPtr->addressedLabel = -1;
+                            }
+#ifdef TEXT_DEBUG
+                            cerr << "[" << tmpToken << "]:" ;
+                            cerr << "Label Address: ";
+                            if(tmpPtr->addressedLabel == -1) cerr << "<NOT DECIDED YET>\n";
+                            else cerr << tmpPtr->addressedLabel << "\n";
+#endif
+                            inst.push_back(tmpPtr);
+                            tmpPtr = nullptr;
+                            break;
                         case LA:
                         case LB:
                         case LH:
                         case LW:
                         case SB:
                         case SH:
-                        case SW:break;
-                            //TODO
+                        case SW:
+                            tmpPtr = new instructionTemp;
+                            tmpPtr->name = currentInst;
+                            tmpPtr->argCount = 2;
+                            linePos = stringSkipForNumberAndRegister(tmpLine, linePos);
+                            linePos = getRegisterFromString(tmpLine, linePos, Rdest);
+                            tmpPtr->Rdest = mapper.registerMapper[Rdest];
+                            while(linePos < lineLength && tmpLine[linePos] != ',') ++linePos;
+                            ++linePos;
+                            while(linePos < lineLength && tmppLine[linePos] == ' ') ++linePos;
+                            if(tmpLine[linePos] == '-' || (tmpLine[linePos] <= '9' && tmpLine[linePos] >= '0')){
+                                linePos++;
+                                linePos = getNumberFromString(tmpLine, linePos, tmpPtr->offset);
+                                linePos = stringSkipForNumberAndRegister(tmpLine, linePos);
+                                linePos = getRegisterFromString(tmpLine, tmpLine, Rsrc1);
+                                tmpPtr->argCount = 3;
+                                tmpPtr->Rsrc = mapper.registerMapper[Rsrc1];
+                            }
+                            else{
+                                linePos = getLabelFromString(tmpLine, linePos, label);
+                                if(labelToIndex.count(label)) tmpPtr->addressedLabel = labels[labelToIndex[label]];
+                                else{
+                                    labels.push_back(label);
+                                    labelToIndex[label] = labels.size() - 1;
+                                    labelToAddress[label] = -1;
+                                    tmpPtr->addressedLabel = -1;
+                                }
+                            }
+#ifdef TEXT_DEBUG
+                            cerr << "[" << tmpToken << "]:" ;
+                            cerr << "Rdest: $" << tmpPtr->Rdest << " ";
+                            if(tmpPtr->argCount == 2){
+                                cerr << "Label Address: ";
+                                if(tmpPtr->addressedLabel == -1) cerr << "<NOT DECIDED YET>\n";
+                                else cerr << tmpPtr->addressedLabel << "\n";
+                            }
+                            else{
+                                cerr << "Rsrc: $"<< tmpPtr->Rsrc << " ";
+                                cerr << "Offset:" << tmpPtr->offset << "\n";
+                            }
+#endif
+                            inst.push_back(tmpPtr);
+                            tmpPtr = nullptr;
                         case NOP:
                         case SYSCALL:
+                            tmpPtr = new instructionTemp;
+                            tmpPtr->name = currentInst;
+                            tmpPtr->argCount = 0;
+#ifdef TEXT_DEBUG
+                            cerr << "[" << tmpToken << "]:\n";
+#endif
                         default:
+                            cerr << "COMPILE ERROR\n";
+                            getchar();
+                            exit(0);
                             break;
                     }
                 }
                 else{
+                    string tmpLabel = "";
+                    for(uint8_i = 0; i < tmpToken.length(); ++i) tmpLabel += tmpLabel[i];
+                    labelToAddress = inst.size();
+                    if(labelToIndex.count(tmpLabel) == 0){
+                        labels.push_back(label);
+                        labelToIndex[label] = labels.size() - 1;
+                    }
                 }
             }
             linePos = 0;
