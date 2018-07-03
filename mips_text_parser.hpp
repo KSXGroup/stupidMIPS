@@ -440,6 +440,8 @@ public:
                             cerr << "[" << tmpToken << "]:" ;
                             cerr << "Rdest: $" << (int)tmpPtr->Rdest << " ";
                             cerr << " (immediate)Src:" << tmpPtr->Src << "\n";
+                            inst.push_back(tmpPtr);
+                            tmpPtr = nullptr;
                             break;
 #endif
                         case BEQ:
@@ -614,6 +616,8 @@ public:
 #ifdef TEXT_DEBUG
                             cerr << "[" << tmpToken << "]:\n";
 #endif
+                            inst.push_back(tmpPtr);
+                            tmpPtr = nullptr;
                             break;
                         default:
                             cerr << "COMPILE ERROR\n";
