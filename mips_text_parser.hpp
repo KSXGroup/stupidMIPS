@@ -59,10 +59,39 @@ public:
         else return tmp;
     }
 
+
+    inline uint8_t stringSkipForNumberAndRegister(const string &s, uint8_t st){
+        while(1){
+            if(st >= s.lenghth() || s[st] == '$' || (s[st] <= '9' && s[st] >= '0')) break;
+            st++;
+        }                        Rdest = "";
+        Rsrc1 = "";
+        Src2 = "";
+        tmpPtr = new instructionTemp;
+        return st;
+    }
+
+    inline uint8_t getNumberFromString(const string &s, uint8_t st, int16_t &res){
+        string tmp = "";
+        while(s[st] >= '0' && s[st] <= '9') tmp += s[st++];
+        res = byteConvert::stringToInt16(tmp);
+        return st;
+    }
+
+    inline uint8_t getRegisterFromString(const string &s, uint8_t st, string &res){
+        if(s[st] != '$') return st;
+        else{
+            res = "";
+            res += '$';
+            while(st < s.length() && (s[st] != ' ' && s[st] != '\t')) res += s[st++];
+            return st;
+        }
+    }
+
     void MIPSTextPreProcess(MIPSMemory &mem){
         std::string tmpLine = "", tmpToken = "";
         pos = 0;
-        uint32_t linePos = 0, lineLength = 0;
+        uint8_t linePos = 0, lineLength = 0;
         bool ifMinus = 0;
         while(pos < codeLength){
             tmpLine = getNextLine();
@@ -259,6 +288,8 @@ public:
             else if(status == STATUS_TEXT){
                 if(mapper.instructionMapper.count(tmpToken)){
                     INSTRUCTION currentInst = mapper.instructionMapper[tmpToken];
+                    string Rdest = "", Rsrc1 = "", Src2 = "", address = "", imm = "";
+                    instructionTemp *tmpPtr = nullptr;
                     switch(currentInst){
                         case DOTTEXT:
                             status = STATUS_TEXT;
@@ -279,18 +310,132 @@ public:
                         case SGE:
                         case SGT:
                         case SLE:
-                        case SNE:
-                        //--TODO--
-                        //Rdes, Rsrc1, Src2 AND Rdest, Src2 TYPE
+                                       //TODO             case SNE:
+                            Rdest = "";
+                            Rsrc1 = "";
+                            Src2 = "";
+                            tmpPtr = new instructionTemp;
+                            tmpPtr->name = currentInst;
+                            tmpPtr->argCount = 3;
+                            while(linePos < lineLength && tmpLine[linePos] != '$') ++linePos;
+                            linePos = getRegisterFromString(tmpLine, linePos, Rdest);
+                            tmpPtr->Rdest = mapper.registerMapper[Rdest];
+                            while(linePos < lineLength && tmpLine[linePos] != '$') ++linePos;
+                            linePos = getRegisterFromString(tmpLine, linePos, Rsrc);
+                            tmpPtr->Rsrc = mapper.registerMapper[Rsrc1];
+                            linePos = stringSkipForNumberAndRegister(tmpLine, linePos);
+                            if(tmpLine[linePos] == '$'){
+                                tmpPtr->srcType = 1;
+                                linePos = getRegisterFromString(tmpLine, linePos, Src2);
+                                tmpPtr->Src = mapper.registerMapper[Src2];
+                            }
+                            else{
+                                tmpPtr->Src = 0;
+                                linePos = getNumberFromString(tmpLine, linePos, tmpPtr->Src);
+                            }
+
+                            inst.push_back(tmpPtr);
+
+#ifdef TEXT_DEBUG
+                        cerr << "[" << tmpToken << "]:" ;
+                        cerr << "Rdest: $" << tmpPtr->Rdest << " ";
+                        cerr << "Rsrc1: $" << tmpPtr->Rsrc << " ";
+                        cerr << "SrcType" << ((tmpPtr->srcType == 1) ? "Register: $" : "ImmediateNumber:" );
+                        cerr << tmpPtr->Src << "\n";
+#endif
+                        tmpPtr = nullptr;
+                        break;
+
+                        //Rdest, Rsrc1, Src2 AND Rdest, Src2 TYPE
                         case MUL:
                         case MULU:
                         case DIV:
                         case DIVU:
-                            //TODO
+                            Rdest = "";
+                            Rsrc1 = "";
+                            Src2 = "";
+                            tmpPtr = new instructionTemp;
+                            tmpPtr->name = currentInst;
+                            linePos = stringSkipForNumberAndRegister(tmpLine, linePos);
+                            linePos = getRegisterFromString(tmpLine, linePos, Rdest);
+                            tmpPtr->Rdest = mapper.registerMapper[Rdest];
+                            linePos = stringSkipForNumberAndRegister(tmpLine, linePos);
+                            if(tmpLine[linePos] == '$'){
+                                linePos = getRegisterFromString(tempLine, linePos, Rsrc1);
+                                linePos = stringSkipForNumberAndRegister(tmpLine, linePos);
+                                if(linePos == lineLength){
+                                    tmpPtr->argCount = 2;
+                                    tmpPtr->Src = mapper.registerMapper[Rsrc1];
+                                }
+                                else{
+                                    tmpPtr->argCount = 3;
+                                    tmpPtr->Rsrc = mapper.registerMapper[Rsrc1];
+                                    if(tmpLine[linePos] == '$'){
+                                        linePos = getRegisterFromString(tmpLine, linePos, Src2);
+                                        tmpPtr->srcType = 1;
+                                        tmpPtr->Src = mapper.registerMapper[Src2];
+                                    }
+                                    else{
+                                        tmpPtr->srcType = 0;
+                                        linePos = getNumberFromString(tmpLine, linePos, tmpPtr->Src);
+                                    }
+                                }
+                            }
+                            else{
+                               tmpPtr->srcType = 0;
+                               tmpPtr->argCount = 2;
+                               linePos = getNumberFromString(tmpLine, linePos, tmpPtr->Src);
+                            }
+#ifdef TEXT_DEBUG
+                            cerr << "[" << tmpToken << "]:" ;
+                            cerr << "Rdest: $" << tmpPtr->Rdest << " ";
+                            if(tmpPtr->argCount == 3) cerr << "Rsrc1: $" << tmpPtr->Rsrc << " ";
+                            cerr << "SrcType" << ((tmpPtr->srcType == 1) ? "Register: $" : "ImmediateNumber:" );
+                            cerr << tmpPtr->Src << "\n";
+#endif
+                            inst.pusback(tmpPtr);
+                            tmpPtr = nullptr;
+                            break;
                         case NEG:
                         case NEGU:
-                            //TODO
+                        case MOVE:
+                            new tmpPtr = new instructionTemp;
+                            Rdest = Rsrc1 = "";
+
                         case LI:
+                            //TODO
+                        case BEQ:
+                        case BNE:
+                        case BGE:
+                        case BLE:
+                        case BGT:
+                        case BLT:
+                            //TODO
+                        case BEQZ:
+                        case BNEZ:
+                        case BLEZ:
+                        case BGEZ:
+                        case BGTZ:
+                        case BLTZ:
+                            //TODO
+                        case JR:
+                        case JALR:
+                        case MFHI:
+                        case MFLO:
+                            //TODO
+                        case J:
+                        case JAL:
+                            //TODO
+                        case LA:
+                        case LB:
+                        case LH:
+                        case LW:
+                        case SB:
+                        case SH:
+                        case SW:break;
+                            //TODO
+                        case NOP:
+                        case SYSCALL:
                         default:
                             break;
                     }

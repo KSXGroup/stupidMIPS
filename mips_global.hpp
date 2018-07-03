@@ -4,7 +4,10 @@
 
 struct instructionTemp{
     INSTRUCTION name;
-    int rs, rt, rd, shamt, funct, immediate, addressIdx;
+    char Rdest, Rsrc, argCount;
+    int16_t Src;
+    char srcType = 0; // 0 for immediate number, 1 for register
+    uint32_t addressedLabel = 0; //label is translated to address(line number)
 };
 
 class MIPSMapper{

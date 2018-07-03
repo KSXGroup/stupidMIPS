@@ -1,6 +1,7 @@
 #ifndef _MIPS_DEFINE_H_
 #define _MIPS_DEFINE_H_
 #define STATIC_DATA_DEBUG
+#define TEXT_DEBUG
 #include <iostream>
 #include <fstream>
 #include <map>
@@ -21,7 +22,7 @@ const BYTE STATUS_TEXT = 4;
 enum INSTRUCTION{
     ADD = 0, ADDU, ADDIU, SUB, SUBU, MUL, MULU, DIV, DIVU, XOR, XORU, NEG, NEGU, REM, REMU,
     LI,
-    SEQ, SGE, SGT, SLE, SLT, SNE, B, BEQ, BNE, BGE,BLE, BGT, BLT, BEQZ, BNEZ, BLEZ, BGTZ, BLTZ,
+    SEQ, SGE, SGT, SLE, SLT, SNE, B, BEQ, BNE, BGE,BLE, BGT, BLT, BEQZ, BNEZ, BLEZ, BGEZ, BGTZ, BLTZ,
     J, JR, JAL,JALR,
     LA, LB, LH, LW,
     SB, SH, SW,
