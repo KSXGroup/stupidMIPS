@@ -1,25 +1,25 @@
-	.data
-	.word 1
+        .data
+        .word 1
 _static_0:
-	.asciiz "\n"
-	.align 2
-	.word 0
+        .asciiz "\n"
+        .align 2
+        .word 0
 _static_2:
-	.asciiz ""
-	.align 2
+        .asciiz ""
+        .align 2
 _static_1:
-	.word 0
-	.data
+        .word 0
+        .data
 _buffer:
-	.word 0
-	.text
+        .word 0
+        .text
 _buffer_init:
-	li $a0, 256
+        li $a0, 256
 	li $v0, 9
 	syscall
 	sw $v0, _buffer
-	jr $ra
-	.text
+        jr $ra
+        .text
 main:
 	jal _buffer_init
 	add $fp, $zero, $sp
@@ -274,7 +274,7 @@ _continue_loop3:
 	sw $8, -12($fp)
 	b _begin_loop_3
 _end_loop_3:
-	lw $8, 0($fp)
+        lw $8, 0($fp)
 	sub $9, $8, 4
 	lw $10, 0($9)
 	lw $11, -4($fp)
@@ -465,17 +465,17 @@ _end_func_main:
 	lw $fp, -252($fp)
 	jr $ra
 
-	.text
+        .text
 _string_copy:
-	_begin_string_copy:
+        _begin_string_copy:
 	lb $v0, 0($a0)
 	beqz $v0, _exit_string_copy
 	sb $v0, 0($a1)
 	add $a0, $a0, 1
 	add $a1, $a1, 1
 	j _begin_string_copy
-	_exit_string_copy:
-	sb $zero, 0($a1)
+        _exit_string_copy:
+        sb $zero, 0($a1)
 	jr $ra
 
 _func_____built_in_substring:
@@ -485,7 +485,7 @@ _func_____built_in_substring:
 	subu $sp, $sp, 4
 	sw $ra, 0($sp)
 
-	move $t0, $a0
+        move $t0, $a0
 
 	sub $t1, $a2, $a1
 	add $t1, $t1, 1
@@ -512,13 +512,13 @@ _func_____built_in_substring:
 _count_string_length:
 	move $v0, $a0
 
-	_begin_count_string_length:
+        _begin_count_string_length:
 	lb $v1, 0($a0)
 	beqz $v1, _exit_count_string_length
 	add $a0, $a0, 1
 	j _begin_count_string_length
 
-	_exit_count_string_length:
+        _exit_count_string_length:
 	sub $v0, $a0, $v0
 	jr $ra
 
@@ -555,17 +555,17 @@ _func_____built_in_parseInt:
 	move $t0, $a0
 	li $t2, 1
 
-	_count_number_pos:
+        _count_number_pos:
 	lb $t1, 0($t0)
 	bgt $t1, 57, _begin_parse_int
 	blt $t1, 48, _begin_parse_int
 	add $t0, $t0, 1
 	j _count_number_pos
 
-	_begin_parse_int:
+        _begin_parse_int:
 	sub $t0, $t0, 1
 
-	_parsing_int:
+        _parsing_int:
 	blt $t0, $a0, _finish_parse_int
 	lb $t1, 0($t0)
 	sub $t1, $t1, 48
@@ -575,7 +575,7 @@ _func_____built_in_parseInt:
 	sub $t0, $t0, 1
 	j _parsing_int
 
-	_finish_parse_int:
+        _finish_parse_int:
 	jr $ra
 
 _func_____built_in_string_concatenate:
@@ -617,7 +617,7 @@ _func_____built_in_toString:
 	bgez $a0, _skip_set_less_than_zero
 	li $t0, 1
 	neg $a0, $a0
-	_skip_set_less_than_zero:
+        _skip_set_less_than_zero:
 	beqz $a0, _set_zero
 
 	li $t1, 0
@@ -625,22 +625,22 @@ _func_____built_in_toString:
 	move $t3, $a0
 	li $t5, 10
 
-	_begin_count_digit:
+        _begin_count_digit:
 	div $t2, $t5
 	mflo $v0
 	mfhi $v1
 	bgtz $v0, _not_yet
 	bgtz $v1, _not_yet
 	j _yet
-	_not_yet:
+        _not_yet:
 	add $t1, $t1, 1
 	move $t2, $v0
 	j _begin_count_digit
 
-	_yet:
+        _yet:
 	beqz $t0, _skip_reserve_neg
 	add $t1, $t1, 1
-	_skip_reserve_neg:
+        _skip_reserve_neg:
 	add $a0, $t1, 5
 	li $v0, 9
 	syscall
@@ -650,24 +650,24 @@ _func_____built_in_toString:
 	sb $zero, 0($t1)
 	sub $t1, $t1, 1
 
-	_continue_toString:
+        _continue_toString:
 	div $t3, $t5
 	mfhi $v1
 	add $v1, $v1, 48
 	sb $v1, 0($t1)
 	sub $t1, $t1, 1
 	mflo $t3
-	
+
 	bnez $t3, _continue_toString
 
 	beqz $t0, _skip_place_neg
 	li $v1, 45
 	sb $v1, 0($t1)
-	_skip_place_neg:
-	
+        _skip_place_neg:
+
 	jr $ra
 
-	_set_zero:
+        _set_zero:
 	li $a0, 6
 	li $v0, 9
 	syscall

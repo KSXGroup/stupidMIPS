@@ -18,7 +18,7 @@ public:
     }
 
     ~MIPSMemory(){
-        delete data;
+        delete[] data;
         data = nullptr;
     }
 
@@ -65,6 +65,18 @@ public:
     inline void insertBYTE(const int8_t &d){
         stackPosition -= 1;
         byteOperator::setByte(data, stackPosition, d);
+    }
+
+    inline uint32_t getWordUnsigned(const OFFSETTYPE &pos){
+        return byteOperator::getWordUnsigned(data, pos);
+    }
+
+    inline uint16_t getHalfUnsigned(const OFFSETTYPE &pos){
+        return byteOperator::getHalfUnsigned(data, pos);
+    }
+
+    inline uint8_t getByteUnsigned(const OFFSETTYPE &pos){
+        return byteOperator::getByteUnsigned(data, pos);
     }
 
     inline int32_t getWord(const OFFSETTYPE &pos){

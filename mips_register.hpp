@@ -1,23 +1,32 @@
 #ifndef _MIPS_REGISTER_HPP_
 #define _MIPS_REGISTER_HPP_
 #include "mips_define.hpp"
-
+#include "mips_global.hpp"
 class MIPSRegister{
 friend class byteOperator;
 private:
-    BYTE *data;
+    BYTE **data;
 public:
     MIPSRegister(){
-        data = new BYTE[35];
-        for(int i = 0; i < 34; ++i) data[i] = 0;
+        data = new BYTE*[35];
+        for(int i = 0; i < 35; ++i){
+            data[i] = new BYTE[4];
+            for(int j = 0; j < 4; ++j) data[i][j] = 0;
+        }
     }
 
     ~MIPSRegister(){
-        delete[] data;
+        for(int i = 0; i < 35; ++i) delete [] data[i];
         data = nullptr;
     }
 
+    inline void setWord(const int32_t &d, const int32_t registerId){
+        byteOperator::setWord(data[registerId], 0, d);
+    }
 
+    inline int32_t getWord(const int32_t &registerId){
+        return byteOperator::getWord(data[registerId], 0);
+    }
 };
 
 #endif

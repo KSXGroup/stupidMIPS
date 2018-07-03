@@ -2,13 +2,16 @@
 #define _MIPS_GLOBAL_HPP_
 #include "mips_define.hpp"
 
-struct instructionTemp{
+struct MIPSInstruction{
     INSTRUCTION name;
     char Rdest, Rsrc, argCount;
     int16_t Src;
     char srcType = 0; // 0 for immediate number, 1 for register
     int32_t addressedLabel = -1; //label is translated to address(inner line number)
     int32_t offset = 0;
+#ifdef TEXT_DEBUG
+    string dispName = "";
+#endif
 };
 
 class MIPSMapper{
@@ -126,6 +129,17 @@ public:
     static inline int8_t getByte(const BYTE target[], const OFFSETTYPE &pos){
         return (int8_t)(target[pos] & 0xff);
     }
+
+    static inline uint32_t getWordUnsigned(const BYTE target[], const OFFSETTYPE &pos){
+        return ((uint32_t)(target[pos + 3] << 24) & 0xff000000) | ((target[pos + 2] << 16) & 0xff0000) | ((target[pos + 1] << 8) & 0xff00) | (target[pos] & 0xff);
+    }
+    static inline uint16_t getHalfUnsigned(const BYTE target[], const OFFSETTYPE &pos){
+        return ((uint16_t)(target[pos + 1] << 8) & 0xff00) | (target[pos] & 0xff);
+    }
+    static inline uint8_t getByteUnsigned(const BYTE target[], const OFFSETTYPE &pos){
+        return (uint8_t)(target[pos] & 0xff);
+    }
+
     static inline void setWord(BYTE target[], const OFFSETTYPE &pos,const int32_t &p){
         int32_t tmp = p;
         target[pos] = (BYTE)(tmp & 0xff);

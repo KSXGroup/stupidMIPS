@@ -7,18 +7,20 @@ using std::string;
 using std::cerr;
 
 class MIPSTextParser{
+friend class MIPSInstructionProcessor;
 private:
     char *sourceCode = nullptr;
     uint32_t codeLength = 0;
     uint32_t pos = 0;
+    uint32_t mainPos = 0;
     MIPSMapper mapper;
     BYTE status = STATUS_DATA;
-    vector<instructionTemp*> inst;
+    vector<MIPSInstruction*> inst;
     map<string, int32_t> labelToAddress, labelToIndex;
     vector<string> labels;
 
 public:
-    MIPSTextParser(const char *fileName, const MIPSMapper &mp){
+    MIPSTextParser(const char *fileName){
         //READ SOURCE FILE
         std::ifstream fin(fileName);
         fin.seekg(0, std::ios::end);
@@ -36,7 +38,7 @@ public:
         for(int i = 0; i < sz; ++i) delete inst[i];
         inst.clear();
     }
-
+private:
     string getNextLine(){
         if(pos == codeLength) return string();
         string tmp = "";
@@ -96,7 +98,7 @@ public:
             return st;
         }
     }
-
+public:
     void MIPSTextPreProcess(MIPSMemory &mem){
         std::string tmpLine = "", tmpToken = "";
         pos = 0;
@@ -304,7 +306,7 @@ public:
                 if(mapper.instructionMapper.count(tmpToken)){
                     INSTRUCTION currentInst = mapper.instructionMapper[tmpToken];
                     string Rdest = "", Rsrc1 = "", Src2 = "", label = "";
-                    instructionTemp *tmpPtr = nullptr;
+                    MIPSInstruction *tmpPtr = nullptr;
                     switch(currentInst){
                         case DOTTEXT:
                             status = STATUS_TEXT;
@@ -327,7 +329,7 @@ public:
                         case SLE:
                         case SLT:
                         case SNE:
-                            tmpPtr = new instructionTemp;
+                            tmpPtr = new MIPSInstruction;
                             tmpPtr->name = currentInst;
                             tmpPtr->argCount = 3;
                             while(linePos < lineLength && tmpLine[linePos] != '$') ++linePos;
@@ -346,25 +348,24 @@ public:
                                 tmpPtr->Src = 0;
                                 linePos = getNumberFromString(tmpLine, linePos, tmpPtr->Src);
                             }
-
-                            inst.push_back(tmpPtr);
-
 #ifdef TEXT_DEBUG
+                        tmpPtr->dispName = tmpToken;
                         cerr << "[" << tmpToken << "]:" ;
                         cerr << "Rdest: $" << (int)tmpPtr->Rdest << " ";
                         cerr << "Rsrc1: $" << (int)tmpPtr->Rsrc << " ";
                         cerr << "SrcType:" << ((tmpPtr->srcType == 1) ? "Register: $" : "ImmediateNumber:" );
                         cerr << tmpPtr->Src << "\n";
 #endif
-                        tmpPtr = nullptr;
-                        break;
+                            inst.push_back(tmpPtr);
+                            tmpPtr = nullptr;
+                            break;
 
                         //Rdest, Rsrc1, Src2 AND Rdest, Src2 TYPE
                         case MUL:
                         case MULU:
                         case DIV:
                         case DIVU:
-                            tmpPtr = new instructionTemp;
+                            tmpPtr = new MIPSInstruction;
                             tmpPtr->name = currentInst;
                             linePos = stringSkipForNumberAndRegister(tmpLine, linePos);
                             linePos = getRegisterFromString(tmpLine, linePos, Rdest);
@@ -397,6 +398,7 @@ public:
                                linePos = getNumberFromString(tmpLine, linePos, tmpPtr->Src);
                             }
 #ifdef TEXT_DEBUG
+                            tmpPtr->dispName = tmpToken;
                             cerr << "[" << tmpToken << "]:" ;
                             cerr << "Rdest: $" << (int)tmpPtr->Rdest << " ";
                             if(tmpPtr->argCount == 3) cerr << "Rsrc1: $" << (int)tmpPtr->Rsrc << " ";
@@ -409,7 +411,7 @@ public:
                         case NEG:
                         case NEGU:
                         case MOVE:
-                            tmpPtr = new instructionTemp;
+                            tmpPtr = new MIPSInstruction;
                             tmpPtr->argCount = 2;
                             tmpPtr->name = currentInst;
                             Rdest = Rsrc1 = "";
@@ -420,6 +422,7 @@ public:
                             tmpPtr->Rdest = mapper.registerMapper[Rdest];
                             tmpPtr->Rsrc = mapper.registerMapper[Rdest];
 #ifdef TEXT_DEBUG
+                            tmpPtr->dispName = tmpToken;
                             cerr << "[" << tmpToken << "]:" ;
                             cerr << "Rdest: $" << (int)tmpPtr->Rdest << " ";
                             cerr << "Rsrc1: $" << (int)tmpPtr->Rsrc << "\n";
@@ -428,29 +431,31 @@ public:
                             tmpPtr = nullptr;
                             break;
                         case LI:
-                            tmpPtr = new instructionTemp;
+                            tmpPtr = new MIPSInstruction;
                             tmpPtr->argCount = 2;
                             tmpPtr->srcType = 0;
+                            tmpPtr->name = currentInst;
                             linePos = stringSkipForNumberAndRegister(tmpLine, linePos);
                             linePos = getRegisterFromString(tmpLine, linePos, Rdest);
                             tmpPtr->Rdest = mapper.registerMapper[Rdest];
                             linePos = stringSkipForNumberAndRegister(tmpLine, linePos);
                             linePos = getNumberFromString(tmpLine, linePos, tmpPtr->Src);
 #ifdef TEXT_DEBUG
+                            tmpPtr->dispName = tmpToken;
                             cerr << "[" << tmpToken << "]:" ;
                             cerr << "Rdest: $" << (int)tmpPtr->Rdest << " ";
                             cerr << " (immediate)Src:" << tmpPtr->Src << "\n";
+#endif
                             inst.push_back(tmpPtr);
                             tmpPtr = nullptr;
                             break;
-#endif
                         case BEQ:
                         case BNE:
                         case BGE:
                         case BLE:
                         case BGT:
                         case BLT:
-                            tmpPtr = new instructionTemp;
+                            tmpPtr = new MIPSInstruction;
                             tmpPtr->argCount = 3;
                             tmpPtr->name = currentInst;
                             linePos = stringSkipForNumberAndRegister(tmpLine, linePos);
@@ -474,6 +479,7 @@ public:
                             }
                             tmpPtr->addressedLabel = labelToIndex[label];
 #ifdef TEXT_DEBUG
+                            tmpPtr->dispName = tmpToken;
                             cerr << "[" << tmpToken << "]:" ;
                             cerr << "Rdest: $" << (int)tmpPtr->Rdest << " ";
                             cerr << "Src: ";
@@ -493,7 +499,7 @@ public:
                         case BGEZ:
                         case BGTZ:
                         case BLTZ:
-                            tmpPtr = new instructionTemp;
+                            tmpPtr = new MIPSInstruction;
                             tmpPtr->argCount = 2;
                             tmpPtr->name = currentInst;
                             linePos = stringSkipForNumberAndRegister(tmpLine, linePos);
@@ -508,6 +514,7 @@ public:
                             }
                             tmpPtr->addressedLabel = labelToIndex[label];
 #ifdef TEXT_DEBUG
+                            tmpPtr->dispName = tmpToken;
                             cerr << "[" << tmpToken << "]:" ;
                             cerr << "Rdest: $" << (int)tmpPtr->Rdest << " ";
                             cerr << "Label Address: ";
@@ -521,13 +528,14 @@ public:
                         case JALR:
                         case MFHI:
                         case MFLO:
-                             tmpPtr = new instructionTemp;
+                             tmpPtr = new MIPSInstruction;
                              tmpPtr->name = currentInst;
                              tmpPtr->argCount = 1;
                              linePos = stringSkipForNumberAndRegister(tmpLine, linePos);
                              linePos = getRegisterFromString(tmpLine, linePos, Rsrc1);
                              tmpPtr->Rsrc = mapper.registerMapper[Rsrc1];
 #ifdef TEXT_DEBUG
+                            tmpPtr->dispName = tmpToken;
                             cerr << "[" << tmpToken << "]:" ;
                             cerr << "Rsrc: $" << (int)tmpPtr->Rsrc << "\n";
 #endif
@@ -537,7 +545,7 @@ public:
                         case B:
                         case J:
                         case JAL:
-                            tmpPtr = new instructionTemp;
+                            tmpPtr = new MIPSInstruction;
                             tmpPtr->name = currentInst;
                             tmpPtr->argCount = 1;
                             while(linePos < lineLength && (tmpLine[linePos] != ' ' || tmpLine[linePos] != '\t')) ++linePos;
@@ -549,6 +557,7 @@ public:
                             }
                             tmpPtr->addressedLabel = labelToIndex[label];
 #ifdef TEXT_DEBUG
+                            tmpPtr->dispName = tmpToken;
                             cerr << "[" << tmpToken << "]:" ;
                             cerr << "Label Address: ";
                             if(tmpPtr->addressedLabel == -1) cerr << "<NOT DECIDED YET>\n";
@@ -564,7 +573,7 @@ public:
                         case SB:
                         case SH:
                         case SW:
-                            tmpPtr = new instructionTemp;
+                            tmpPtr = new MIPSInstruction;
                             tmpPtr->name = currentInst;
                             tmpPtr->argCount = 2;
                             linePos = stringSkipForNumberAndRegister(tmpLine, linePos);
@@ -593,6 +602,7 @@ public:
                                 tmpPtr->addressedLabel = labelToIndex[label];
                             }
 #ifdef TEXT_DEBUG
+                            tmpPtr->dispName = tmpToken;
                             cerr << "[" << tmpToken << "]:" ;
                             cerr << "Rdest: $" << (int)tmpPtr->Rdest << " ";
                             if(tmpPtr->argCount == 2){
@@ -610,10 +620,11 @@ public:
                             break;
                         case NOP:
                         case SYSCALL:
-                            tmpPtr = new instructionTemp;
+                            tmpPtr = new MIPSInstruction;
                             tmpPtr->name = currentInst;
                             tmpPtr->argCount = 0;
 #ifdef TEXT_DEBUG
+                            tmpPtr->dispName = tmpToken;
                             cerr << "[" << tmpToken << "]:\n";
 #endif
                             inst.push_back(tmpPtr);
@@ -655,15 +666,22 @@ public:
                 for(auto i = labelToAddress.begin(); i != labelToAddress.end(); ++i) std::cerr << i->first << " : "  << i -> second << "\n";
 #endif
         mem.dynamicPosition = mem.staticPosition;
-#define PARSED_DEBUG
-
+        mainPos = labelToAddress["main"];
+#ifdef TEXT_DEBUG
+        for(int i = 0; i < inst.size(); ++i){
+            cerr << inst[i]->dispName << " : " << inst[i]->addressedLabel << "\n";
+        }
+        cerr << inst.size() << "\n";
+#endif
     }
-
 
     void display(){
       std::cout << sourceCode;
     }
 };
+
+
+
 #endif
 
 
