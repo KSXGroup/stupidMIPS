@@ -1,0 +1,1391 @@
+nge To Data Mode From Data Mode]
+[.word]:1
+[.asciiz]:
+
+[.asciiz]:\0
+[.align]:2
+[.word]:0
+[.asciiz]:\0
+[.align]:2
+[.word]:0
+[Change To Data Mode From Data Mode]
+[.word]:0
+[Change To Text Mode From Data Mode]
+[[_buffer_init]]:
+[li]:Rdest: $4  (immediate)Src:256
+[li]:Rdest: $2  (immediate)Src:9
+[syscall]:
+[sw]:Rdest: $2 Label Address: 3
+[jr]:Rsrc: $31
+[[main]]:
+[jal]:Label Address: 6
+[add]:Rdest: $30 Rsrc1: $0 SrcType:Register: $29
+[li]:Rdest: $8  (immediate)Src:4
+[add]:Rdest: $9 Rsrc1: $8 SrcType:ImmediateNumber:1
+[mul]:Rdest: $10 Rsrc1: $	 SrcType:ImmediateNumber:4
+[li]:Rdest: $2  (immediate)Src:9
+[move]:Rdest: $4 Rsrc1: $4
+[syscall]:
+[sw]:Rdest: $2 Rsrc: $30 Offset:-12
+[li]:Rdest: $8  (immediate)Src:4
+[lw]:Rdest: $9 Rsrc: $30 Offset:-12
+[sw]:Rdest: $8 Rsrc: $9 Offset:0
+[add]:Rdest: $10 Rsrc1: $9 SrcType:ImmediateNumber:4
+[sw]:Rdest: $10 Label Address: 2
+[jal]:Label Address: 6
+[move]:Rdest: $4 Rsrc1: $4
+[li]:Rdest: $2  (immediate)Src:17
+[syscall]:
+[[_func_____built_in_string_less]]:
+[sw]:Rdest: $30 Rsrc: $29 Offset:-212
+[add]:Rdest: $30 Rsrc1: $29 SrcType:ImmediateNumber:-4
+[add]:Rdest: $29 Rsrc1: $30 SrcType:ImmediateNumber:-216
+[sw]:Rdest: $31 Rsrc: $29 Offset:0
+[lw]:Rdest: $8 Rsrc: $30 Offset:0
+[sub]:Rdest: $9 Rsrc1: $8 SrcType:ImmediateNumber:4
+[lw]:Rdest: $10 Rsrc: $9 Offset:0
+[lw]:Rdest: $11 Rsrc: $30 Offset:-4
+[sub]:Rdest: $12 Rsrc1: $11 SrcType:ImmediateNumber:4
+[lw]:Rdest: $13 Rsrc: $12 Offset:0
+[sw]:Rdest: $10 Rsrc: $30 Offset:-8
+[ble]:Rdest: $10 Src: Register: $13 Label Address: 8
+[lw]:Rdest: $8 Rsrc: $30 Offset:-4
+[sub]:Rdest: $9 Rsrc1: $8 SrcType:ImmediateNumber:4
+[lw]:Rdest: $10 Rsrc: $9 Offset:0
+[sw]:Rdest: $10 Rsrc: $30 Offset:-8
+[[_end_if_0]]:
+[li]:Rdest: $8  (immediate)Src:0
+[sw]:Rdest: $8 Rsrc: $30 Offset:-12
+[[_begin_loop_0]]:
+[lw]:Rdest: $8 Rsrc: $30 Offset:-12
+[lw]:Rdest: $9 Rsrc: $30 Offset:-8
+[bge]:Rdest: $8 Src: Register: $9 Label Address: 10
+[lw]:Rdest: $8 Rsrc: $30 Offset:0
+[lw]:Rdest: $9 Rsrc: $30 Offset:-12
+[add]:Rdest: $10 Rsrc1: $8 SrcType:Register: $9
+[lb]:Rdest: $11 Rsrc: $10 Offset:0
+[lw]:Rdest: $12 Rsrc: $30 Offset:-4
+[add]:Rdest: $13 Rsrc1: $12 SrcType:Register: $9
+[lb]:Rdest: $14 Rsrc: $13 Offset:0
+[sw]:Rdest: $11 Rsrc: $30 Offset:-16
+[sw]:Rdest: $14 Rsrc: $30 Offset:-20
+[beq]:Rdest: $11 Src: Register: $14 Label Address: 11
+[lw]:Rdest: $8 Rsrc: $30 Offset:-16
+[lw]:Rdest: $9 Rsrc: $30 Offset:-20
+[slt]:Rdest: $10 Rsrc1: $8 SrcType:Register: $9
+[move]:Rdest: $2 Rsrc1: $2
+[sw]:Rdest: $10 Rsrc: $30 Offset:-76
+[b]:Label Address: 6
+[[_end_if_1]]:
+[[_continue_loop0]]:
+[lw]:Rdest: $8 Rsrc: $30 Offset:-12
+[add]:Rdest: $8 Rsrc1: $8 SrcType:ImmediateNumber:1
+[sw]:Rdest: $8 Rsrc: $30 Offset:-12
+[b]:Label Address: 6
+[[_end_loop_0]]:
+[lw]:Rdest: $8 Rsrc: $30 Offset:-4
+[sub]:Rdest: $9 Rsrc1: $8 SrcType:ImmediateNumber:4
+[lw]:Rdest: $10 Rsrc: $9 Offset:0
+[lw]:Rdest: $11 Rsrc: $30 Offset:-8
+[slt]:Rdest: $12 Rsrc1: $11 SrcType:Register: $10
+[move]:Rdest: $2 Rsrc1: $2
+[sw]:Rdest: $12 Rsrc: $30 Offset:-88
+[b]:Label Address: 6
+[[_end_func_____built_in_string_less]]:
+[lw]:Rdest: $31 Rsrc: $29 Offset:0
+[add]:Rdest: $29 Rsrc1: $30 SrcType:ImmediateNumber:4
+[lw]:Rdest: $30 Rsrc: $30 Offset:-208
+[jr]:Rsrc: $31
+[[_func_____built_in_string_equal]]:
+[sw]:Rdest: $30 Rsrc: $29 Offset:-188
+[add]:Rdest: $30 Rsrc1: $29 SrcType:ImmediateNumber:-4
+[add]:Rdest: $29 Rsrc1: $30 SrcType:ImmediateNumber:-192
+[sw]:Rdest: $31 Rsrc: $29 Offset:0
+[lw]:Rdest: $8 Rsrc: $30 Offset:0
+[sub]:Rdest: $9 Rsrc1: $8 SrcType:ImmediateNumber:4
+[lw]:Rdest: $10 Rsrc: $9 Offset:0
+[lw]:Rdest: $11 Rsrc: $30 Offset:-4
+[sub]:Rdest: $12 Rsrc1: $11 SrcType:ImmediateNumber:4
+[lw]:Rdest: $13 Rsrc: $12 Offset:0
+[beq]:Rdest: $10 Src: Register: $13 Label Address: 15
+[move]:Rdest: $2 Rsrc1: $2
+[b]:Label Address: 6
+[[_end_if_2]]:
+[lw]:Rdest: $8 Rsrc: $30 Offset:0
+[sub]:Rdest: $9 Rsrc1: $8 SrcType:ImmediateNumber:4
+[lw]:Rdest: $10 Rsrc: $9 Offset:0
+[li]:Rdest: $11  (immediate)Src:0
+[sw]:Rdest: $10 Rsrc: $30 Offset:-12
+[sw]:Rdest: $11 Rsrc: $30 Offset:-8
+[[_begin_loop_1]]:
+[lw]:Rdest: $8 Rsrc: $30 Offset:-8
+[lw]:Rdest: $9 Rsrc: $30 Offset:-12
+[bge]:Rdest: $8 Src: Register: $9 Label Address: 17
+[lw]:Rdest: $8 Rsrc: $30 Offset:0
+[lw]:Rdest: $9 Rsrc: $30 Offset:-8
+[add]:Rdest: $10 Rsrc1: $8 SrcType:Register: $9
+[lb]:Rdest: $11 Rsrc: $10 Offset:0
+[lw]:Rdest: $12 Rsrc: $30 Offset:-4
+[add]:Rdest: $13 Rsrc1: $12 SrcType:Register: $9
+[lb]:Rdest: $14 Rsrc: $13 Offset:0
+[beq]:Rdest: $11 Src: Register: $14 Label Address: 18
+[move]:Rdest: $2 Rsrc1: $2
+[b]:Label Address: 6
+[[_end_if_3]]:
+[[_continue_loop1]]:
+[lw]:Rdest: $8 Rsrc: $30 Offset:-8
+[add]:Rdest: $8 Rsrc1: $8 SrcType:ImmediateNumber:1
+[sw]:Rdest: $8 Rsrc: $30 Offset:-8
+[b]:Label Address: 6
+[[_end_loop_1]]:
+[li]:Rdest: $8  (immediate)Src:1
+[move]:Rdest: $2 Rsrc1: $2
+[b]:Label Address: 6
+[[_end_func_____built_in_string_equal]]:
+[lw]:Rdest: $31 Rsrc: $29 Offset:0
+[add]:Rdest: $29 Rsrc1: $30 SrcType:ImmediateNumber:4
+[lw]:Rdest: $30 Rsrc: $30 Offset:-184
+[jr]:Rsrc: $31
+[[_func_____built_in_string_inequal]]:
+[sw]:Rdest: $30 Rsrc: $29 Offset:-188
+[add]:Rdest: $30 Rsrc1: $29 SrcType:ImmediateNumber:-4
+[add]:Rdest: $29 Rsrc1: $30 SrcType:ImmediateNumber:-192
+[sw]:Rdest: $31 Rsrc: $29 Offset:0
+[lw]:Rdest: $8 Rsrc: $30 Offset:0
+[sub]:Rdest: $9 Rsrc1: $8 SrcType:ImmediateNumber:4
+[lw]:Rdest: $10 Rsrc: $9 Offset:0
+[lw]:Rdest: $11 Rsrc: $30 Offset:-4
+[sub]:Rdest: $12 Rsrc1: $11 SrcType:ImmediateNumber:4
+[lw]:Rdest: $13 Rsrc: $12 Offset:0
+[beq]:Rdest: $10 Src: Register: $13 Label Address: 22
+[li]:Rdest: $8  (immediate)Src:1
+[move]:Rdest: $2 Rsrc1: $2
+[b]:Label Address: 6
+[[_end_if_4]]:
+[lw]:Rdest: $8 Rsrc: $30 Offset:0
+[sub]:Rdest: $9 Rsrc1: $8 SrcType:ImmediateNumber:4
+[lw]:Rdest: $10 Rsrc: $9 Offset:0
+[li]:Rdest: $11  (immediate)Src:0
+[sw]:Rdest: $10 Rsrc: $30 Offset:-12
+[sw]:Rdest: $11 Rsrc: $30 Offset:-8
+[[_begin_loop_2]]:
+[lw]:Rdest: $8 Rsrc: $30 Offset:-8
+[lw]:Rdest: $9 Rsrc: $30 Offset:-12
+[bge]:Rdest: $8 Src: Register: $9 Label Address: 24
+[lw]:Rdest: $8 Rsrc: $30 Offset:0
+[lw]:Rdest: $9 Rsrc: $30 Offset:-8
+[add]:Rdest: $10 Rsrc1: $8 SrcType:Register: $9
+[lb]:Rdest: $11 Rsrc: $10 Offset:0
+[lw]:Rdest: $12 Rsrc: $30 Offset:-4
+[add]:Rdest: $13 Rsrc1: $12 SrcType:Register: $9
+[lb]:Rdest: $14 Rsrc: $13 Offset:0
+[beq]:Rdest: $11 Src: Register: $14 Label Address: 25
+[li]:Rdest: $8  (immediate)Src:1
+[move]:Rdest: $2 Rsrc1: $2
+[b]:Label Address: 6
+[[_end_if_5]]:
+[[_continue_loop2]]:
+[lw]:Rdest: $8 Rsrc: $30 Offset:-8
+[add]:Rdest: $8 Rsrc1: $8 SrcType:ImmediateNumber:1
+[sw]:Rdest: $8 Rsrc: $30 Offset:-8
+[b]:Label Address: 6
+[[_end_loop_2]]:
+[move]:Rdest: $2 Rsrc1: $2
+[b]:Label Address: 6
+[[_end_func_____built_in_string_inequal]]:
+[lw]:Rdest: $31 Rsrc: $29 Offset:0
+[add]:Rdest: $29 Rsrc1: $30 SrcType:ImmediateNumber:4
+[lw]:Rdest: $30 Rsrc: $30 Offset:-184
+[jr]:Rsrc: $31
+[[_func_____built_in_string_greater]]:
+[sw]:Rdest: $30 Rsrc: $29 Offset:-132
+[add]:Rdest: $30 Rsrc1: $29 SrcType:ImmediateNumber:-4
+[add]:Rdest: $29 Rsrc1: $30 SrcType:ImmediateNumber:-136
+[sw]:Rdest: $31 Rsrc: $29 Offset:0
+[lw]:Rdest: $8 Rsrc: $30 Offset:-4
+[sw]:Rdest: $8 Rsrc: $29 Offset:-4
+[lw]:Rdest: $9 Rsrc: $30 Offset:0
+[sw]:Rdest: $9 Rsrc: $29 Offset:-8
+[jal]:Label Address: 6
+[sw]:Rdest: $2 Rsrc: $30 Offset:-8
+[lw]:Rdest: $8 Rsrc: $30 Offset:-8
+[move]:Rdest: $2 Rsrc1: $2
+[b]:Label Address: 6
+[[_end_func_____built_in_string_greater]]:
+[lw]:Rdest: $31 Rsrc: $29 Offset:0
+[add]:Rdest: $29 Rsrc1: $30 SrcType:ImmediateNumber:4
+[lw]:Rdest: $30 Rsrc: $30 Offset:-128
+[jr]:Rsrc: $31
+[[_func_____built_in_string_less_equal]]:
+[sw]:Rdest: $30 Rsrc: $29 Offset:-220
+[add]:Rdest: $30 Rsrc1: $29 SrcType:ImmediateNumber:-4
+[add]:Rdest: $29 Rsrc1: $30 SrcType:ImmediateNumber:-224
+[sw]:Rdest: $31 Rsrc: $29 Offset:0
+[lw]:Rdest: $8 Rsrc: $30 Offset:0
+[sub]:Rdest: $9 Rsrc1: $8 SrcType:ImmediateNumber:4
+[lw]:Rdest: $10 Rsrc: $9 Offset:0
+[lw]:Rdest: $11 Rsrc: $30 Offset:-4
+[sub]:Rdest: $12 Rsrc1: $11 SrcType:ImmediateNumber:4
+[lw]:Rdest: $13 Rsrc: $12 Offset:0
+[sw]:Rdest: $10 Rsrc: $30 Offset:-8
+[ble]:Rdest: $10 Src: Register: $13 Label Address: 31
+[lw]:Rdest: $8 Rsrc: $30 Offset:-4
+[sub]:Rdest: $9 Rsrc1: $8 SrcType:ImmediateNumber:4
+[lw]:Rdest: $10 Rsrc: $9 Offset:0
+[sw]:Rdest: $10 Rsrc: $30 Offset:-8
+[[_end_if_6]]:
+[li]:Rdest: $8  (immediate)Src:0
+[sw]:Rdest: $8 Rsrc: $30 Offset:-12
+[[_begin_loop_3]]:
+[lw]:Rdest: $8 Rsrc: $30 Offset:-12
+[lw]:Rdest: $9 Rsrc: $30 Offset:-8
+[bge]:Rdest: $8 Src: Register: $9 Label Address: 33
+[lw]:Rdest: $8 Rsrc: $30 Offset:0
+[lw]:Rdest: $9 Rsrc: $30 Offset:-12
+[add]:Rdest: $10 Rsrc1: $8 SrcType:Register: $9
+[lb]:Rdest: $11 Rsrc: $10 Offset:0
+[lw]:Rdest: $12 Rsrc: $30 Offset:-4
+[add]:Rdest: $13 Rsrc1: $12 SrcType:Register: $9
+[lb]:Rdest: $14 Rsrc: $13 Offset:0
+[sw]:Rdest: $11 Rsrc: $30 Offset:-16
+[sw]:Rdest: $14 Rsrc: $30 Offset:-20
+[beq]:Rdest: $11 Src: Register: $14 Label Address: 34
+[lw]:Rdest: $8 Rsrc: $30 Offset:-16
+[lw]:Rdest: $9 Rsrc: $30 Offset:-20
+[slt]:Rdest: $10 Rsrc1: $8 SrcType:Register: $9
+[move]:Rdest: $2 Rsrc1: $2
+[sw]:Rdest: $10 Rsrc: $30 Offset:-76
+[b]:Label Address: 6
+[[_end_if_7]]:
+[[_continue_loop3]]:
+[lw]:Rdest: $8 Rsrc: $30 Offset:-12
+[add]:Rdest: $8 Rsrc1: $8 SrcType:ImmediateNumber:1
+[sw]:Rdest: $8 Rsrc: $30 Offset:-12
+[b]:Label Address: 6
+[[_end_loop_3]]:
+[lw]:Rdest: $8 Rsrc: $30 Offset:0
+[sub]:Rdest: $9 Rsrc1: $8 SrcType:ImmediateNumber:4
+[lw]:Rdest: $10 Rsrc: $9 Offset:0
+[lw]:Rdest: $11 Rsrc: $30 Offset:-4
+[sub]:Rdest: $12 Rsrc1: $11 SrcType:ImmediateNumber:4
+[lw]:Rdest: $13 Rsrc: $12 Offset:0
+[sle]:Rdest: $14 Rsrc1: $10 SrcType:Register: $13
+[move]:Rdest: $2 Rsrc1: $2
+[sw]:Rdest: $14 Rsrc: $30 Offset:-96
+[b]:Label Address: 6
+[[_end_func_____built_in_string_less_equal]]:
+[lw]:Rdest: $31 Rsrc: $29 Offset:0
+[add]:Rdest: $29 Rsrc1: $30 SrcType:ImmediateNumber:4
+[lw]:Rdest: $30 Rsrc: $30 Offset:-216
+[jr]:Rsrc: $31
+[[_func_____built_in_string_greater_equal]]:
+[sw]:Rdest: $30 Rsrc: $29 Offset:-132
+[add]:Rdest: $30 Rsrc1: $29 SrcType:ImmediateNumber:-4
+[add]:Rdest: $29 Rsrc1: $30 SrcType:ImmediateNumber:-136
+[sw]:Rdest: $31 Rsrc: $29 Offset:0
+[lw]:Rdest: $8 Rsrc: $30 Offset:-4
+[sw]:Rdest: $8 Rsrc: $29 Offset:-4
+[lw]:Rdest: $9 Rsrc: $30 Offset:0
+[sw]:Rdest: $9 Rsrc: $29 Offset:-8
+[jal]:Label Address: 6
+[sw]:Rdest: $2 Rsrc: $30 Offset:-8
+[lw]:Rdest: $8 Rsrc: $30 Offset:-8
+[move]:Rdest: $2 Rsrc1: $2
+[b]:Label Address: 6
+[[_end_func_____built_in_string_greater_equal]]:
+[lw]:Rdest: $31 Rsrc: $29 Offset:0
+[add]:Rdest: $29 Rsrc1: $30 SrcType:ImmediateNumber:4
+[lw]:Rdest: $30 Rsrc: $30 Offset:-128
+[jr]:Rsrc: $31
+[[_func_____built_in_println]]:
+[sw]:Rdest: $30 Rsrc: $29 Offset:-128
+[add]:Rdest: $30 Rsrc1: $29 SrcType:ImmediateNumber:-4
+[add]:Rdest: $29 Rsrc1: $30 SrcType:ImmediateNumber:-132
+[sw]:Rdest: $31 Rsrc: $29 Offset:0
+[lw]:Rdest: $8 Rsrc: $30 Offset:0
+[li]:Rdest: $2  (immediate)Src:4
+[move]:Rdest: $4 Rsrc1: $4
+[syscall]:
+[la]:Rdest: $8 Label Address: 0
+[move]:Rdest: $9 Rsrc1: $9
+[li]:Rdest: $2  (immediate)Src:4
+[move]:Rdest: $4 Rsrc1: $4
+[syscall]:
+[[_end_func_____built_in_println]]:
+[lw]:Rdest: $31 Rsrc: $29 Offset:0
+[add]:Rdest: $29 Rsrc1: $30 SrcType:ImmediateNumber:4
+[lw]:Rdest: $30 Rsrc: $30 Offset:-124
+[jr]:Rsrc: $31
+[[_func_main]]:
+[sw]:Rdest: $30 Rsrc: $29 Offset:-256
+[add]:Rdest: $30 Rsrc1: $29 SrcType:ImmediateNumber:-4
+[add]:Rdest: $29 Rsrc1: $30 SrcType:ImmediateNumber:-260
+[sw]:Rdest: $31 Rsrc: $29 Offset:0
+[lw]:Rdest: $8 Label Address: 2
+[sub]:Rdest: $9 Rsrc1: $8 SrcType:ImmediateNumber:4
+[lw]:Rdest: $10 Rsrc: $9 Offset:0
+[add]:Rdest: $11 Rsrc1: $10 SrcType:ImmediateNumber:1
+[mul]:Rdest: $12 Rsrc1: $
+                          SrcType:ImmediateNumber:4
+[li]:Rdest: $2  (immediate)Src:9
+[move]:Rdest: $4 Rsrc1: $4
+[sw]:Rdest: $10 Rsrc: $30 Offset:-12
+[syscall]:
+[sw]:Rdest: $2 Rsrc: $30 Offset:-24
+[lw]:Rdest: $8 Rsrc: $30 Offset:-12
+[lw]:Rdest: $9 Rsrc: $30 Offset:-24
+[sw]:Rdest: $8 Rsrc: $9 Offset:0
+[add]:Rdest: $10 Rsrc1: $9 SrcType:ImmediateNumber:4
+[li]:Rdest: $11  (immediate)Src:0
+[sw]:Rdest: $10 Rsrc: $30 Offset:0
+[sw]:Rdest: $11 Rsrc: $30 Offset:-4
+[[_begin_loop_4]]:
+[lw]:Rdest: $8 Label Address: 2
+[sub]:Rdest: $9 Rsrc1: $8 SrcType:ImmediateNumber:4
+[lw]:Rdest: $10 Rsrc: $9 Offset:0
+[lw]:Rdest: $11 Rsrc: $30 Offset:-4
+[bge]:Rdest: $11 Src: Register: $10 Label Address: 43
+[lw]:Rdest: $8 Rsrc: $30 Offset:-4
+[mul]:Rdest: $9 Rsrc1:  SrcType:ImmediateNumber:4
+[lw]:Rdest: $10 Label Address: 2
+[add]:Rdest: $11 Rsrc1: $10 SrcType:Register: $9
+[sw]:Rdest: $0 Rsrc: $11 Offset:0
+[li]:Rdest: $2  (immediate)Src:5
+[syscall]:
+[sw]:Rdest: $2 Rsrc: $30 Offset:-60
+[lw]:Rdest: $8 Rsrc: $30 Offset:-4
+[mul]:Rdest: $9 Rsrc1:  SrcType:ImmediateNumber:4
+[lw]:Rdest: $10 Rsrc: $30 Offset:0
+[add]:Rdest: $11 Rsrc1: $10 SrcType:Register: $9
+[lw]:Rdest: $12 Rsrc: $30 Offset:-60
+[sw]:Rdest: $12 Rsrc: $11 Offset:0
+[[_continue_loop4]]:
+[lw]:Rdest: $8 Rsrc: $30 Offset:-4
+[add]:Rdest: $8 Rsrc1: $8 SrcType:ImmediateNumber:1
+[move]:Rdest: $8 Rsrc1: $8
+[sw]:Rdest: $8 Rsrc: $30 Offset:-4
+[b]:Label Address: 6
+[[_end_loop_4]]:
+[li]:Rdest: $8  (immediate)Src:0
+[sw]:Rdest: $8 Rsrc: $30 Offset:-4
+[[_begin_loop_5]]:
+[lw]:Rdest: $8 Label Address: 2
+[sub]:Rdest: $9 Rsrc1: $8 SrcType:ImmediateNumber:4
+[lw]:Rdest: $10 Rsrc: $9 Offset:0
+[lw]:Rdest: $11 Rsrc: $30 Offset:-4
+[bge]:Rdest: $11 Src: Register: $10 Label Address: 46
+[lw]:Rdest: $8 Rsrc: $30 Offset:-4
+[mul]:Rdest: $9 Rsrc1:  SrcType:ImmediateNumber:4
+[lw]:Rdest: $10 Label Address: 2
+[add]:Rdest: $11 Rsrc1: $10 SrcType:Register: $9
+[lw]:Rdest: $12 Rsrc: $11 Offset:0
+[sw]:Rdest: $12 Rsrc: $29 Offset:-4
+[jal]:Label Address: 6
+[sw]:Rdest: $2 Rsrc: $30 Offset:-92
+[lw]:Rdest: $8 Rsrc: $30 Offset:-92
+[li]:Rdest: $2  (immediate)Src:4
+[move]:Rdest: $4 Rsrc1: $4
+[syscall]:
+[[_continue_loop5]]:
+[lw]:Rdest: $8 Rsrc: $30 Offset:-4
+[add]:Rdest: $8 Rsrc1: $8 SrcType:ImmediateNumber:1
+[move]:Rdest: $8 Rsrc1: $8
+[sw]:Rdest: $8 Rsrc: $30 Offset:-4
+[b]:Label Address: 6
+[[_end_loop_5]]:
+[la]:Rdest: $8 Label Address: 1
+[move]:Rdest: $9 Rsrc1: $9
+[li]:Rdest: $2  (immediate)Src:4
+[move]:Rdest: $4 Rsrc1: $4
+[syscall]:
+[la]:Rdest: $8 Label Address: 0
+[li]:Rdest: $2  (immediate)Src:4
+[move]:Rdest: $4 Rsrc1: $4
+[syscall]:
+[lw]:Rdest: $8 Rsrc: $30 Offset:0
+[li]:Rdest: $9  (immediate)Src:0
+[sw]:Rdest: $8 Label Address: 2
+[sw]:Rdest: $9 Rsrc: $30 Offset:-4
+[[_begin_loop_6]]:
+[lw]:Rdest: $8 Label Address: 2
+[sub]:Rdest: $9 Rsrc1: $8 SrcType:ImmediateNumber:4
+[lw]:Rdest: $10 Rsrc: $9 Offset:0
+[lw]:Rdest: $11 Rsrc: $30 Offset:-4
+[bge]:Rdest: $11 Src: Register: $10 Label Address: 49
+[lw]:Rdest: $8 Rsrc: $30 Offset:-4
+[mul]:Rdest: $9 Rsrc1:  SrcType:ImmediateNumber:4
+[lw]:Rdest: $10 Label Address: 2
+[add]:Rdest: $11 Rsrc1: $10 SrcType:Register: $9
+[lw]:Rdest: $12 Rsrc: $11 Offset:0
+[sw]:Rdest: $12 Rsrc: $29 Offset:-4
+[jal]:Label Address: 6
+[sw]:Rdest: $2 Rsrc: $30 Offset:-128
+[lw]:Rdest: $8 Rsrc: $30 Offset:-128
+[li]:Rdest: $2  (immediate)Src:4
+[move]:Rdest: $4 Rsrc1: $4
+[syscall]:
+[[_continue_loop6]]:
+[lw]:Rdest: $8 Rsrc: $30 Offset:-4
+[add]:Rdest: $8 Rsrc1: $8 SrcType:ImmediateNumber:1
+[move]:Rdest: $8 Rsrc1: $8
+[sw]:Rdest: $8 Rsrc: $30 Offset:-4
+[b]:Label Address: 6
+[[_end_loop_6]]:
+[[_end_func_main]]:
+[lw]:Rdest: $31 Rsrc: $29 Offset:0
+[add]:Rdest: $29 Rsrc1: $30 SrcType:ImmediateNumber:4
+[lw]:Rdest: $30 Rsrc: $30 Offset:-252
+[jr]:Rsrc: $31
+[[_string_copy]]:
+[[_begin_string_copy]]:
+[lb]:Rdest: $2 Rsrc: $4 Offset:0
+[beqz]:Rdest: $2 Label Address: 54
+[sb]:Rdest: $2 Rsrc: $5 Offset:0
+[add]:Rdest: $4 Rsrc1: $4 SrcType:ImmediateNumber:1
+[add]:Rdest: $5 Rsrc1: $5 SrcType:ImmediateNumber:1
+[j]:Label Address: 6
+[[_exit_string_copy]]:
+[sb]:Rdest: $0 Rsrc: $5 Offset:0
+[jr]:Rsrc: $31
+[[_func_____built_in_substring]]:
+[lw]:Rdest: $4 Rsrc: $29 Offset:-4
+[lw]:Rdest: $5 Rsrc: $29 Offset:-8
+[lw]:Rdest: $6 Rsrc: $29 Offset:-12
+[subu]:Rdest: $29 Rsrc1: $29 SrcType:ImmediateNumber:4
+[sw]:Rdest: $31 Rsrc: $29 Offset:0
+[move]:Rdest: $8 Rsrc1: $8
+[sub]:Rdest: $9 Rsrc1: $6 SrcType:Register: $5
+[add]:Rdest: $9 Rsrc1: $9 SrcType:ImmediateNumber:1
+[add]:Rdest: $4 Rsrc1: $9 SrcType:ImmediateNumber:5
+[li]:Rdest: $2  (immediate)Src:9
+[syscall]:
+[sw]:Rdest: $9 Rsrc: $2 Offset:0
+[add]:Rdest: $2 Rsrc1: $2 SrcType:ImmediateNumber:4
+[add]:Rdest: $4 Rsrc1: $8 SrcType:Register: $5
+[add]:Rdest: $10 Rsrc1: $8 SrcType:Register: $6
+[lb]:Rdest: $11 Rsrc: $10 Offset:0
+[sb]:Rdest: $0 Rsrc: $10 Offset:0
+[move]:Rdest: $5 Rsrc1: $5
+[move]:Rdest: $12 Rsrc1: $12
+[jal]:Label Address: 6
+[move]:Rdest: $2 Rsrc1: $2
+[sb]:Rdest: $11 Rsrc: $10 Offset:0
+[lw]:Rdest: $31 Rsrc: $29 Offset:0
+[addu]:Rdest: $29 Rsrc1: $29 SrcType:ImmediateNumber:4
+[jr]:Rsrc: $31
+[[_count_string_length]]:
+[move]:Rdest: $2 Rsrc1: $2
+[[_begin_count_string_length]]:
+[lb]:Rdest: $3 Rsrc: $4 Offset:0
+[beqz]:Rdest: $3 Label Address: 58
+[add]:Rdest: $4 Rsrc1: $4 SrcType:ImmediateNumber:1
+[j]:Label Address: 6
+[[_exit_count_string_length]]:
+[sub]:Rdest: $2 Rsrc1: $4 SrcType:Register: $2
+[jr]:Rsrc: $31
+[[_func_____built_in_getString]]:
+[subu]:Rdest: $29 Rsrc1: $29 SrcType:ImmediateNumber:4
+[sw]:Rdest: $31 Rsrc: $29 Offset:0
+[lw]:Rdest: $4 Label Address: 3
+[li]:Rdest: $5  (immediate)Src:255
+[li]:Rdest: $2  (immediate)Src:8
+[syscall]:
+[jal]:Label Address: 6
+[move]:Rdest: $5 Rsrc1: $5
+[add]:Rdest: $4 Rsrc1: $2 SrcType:ImmediateNumber:5
+[li]:Rdest: $2  (immediate)Src:9
+[syscall]:
+[sw]:Rdest: $5 Rsrc: $2 Offset:0
+[add]:Rdest: $2 Rsrc1: $2 SrcType:ImmediateNumber:4
+[lw]:Rdest: $4 Label Address: 3
+[move]:Rdest: $5 Rsrc1: $5
+[move]:Rdest: $8 Rsrc1: $8
+[jal]:Label Address: 6
+[move]:Rdest: $2 Rsrc1: $2
+[lw]:Rdest: $31 Rsrc: $29 Offset:0
+[addu]:Rdest: $29 Rsrc1: $29 SrcType:ImmediateNumber:4
+[jr]:Rsrc: $31
+[[_func_____built_in_parseInt]]:
+[lw]:Rdest: $4 Rsrc: $29 Offset:-4
+[li]:Rdest: $2  (immediate)Src:0
+[move]:Rdest: $8 Rsrc1: $8
+[li]:Rdest: $10  (immediate)Src:1
+[[_count_number_pos]]:
+[lb]:Rdest: $9 Rsrc: $8 Offset:0
+[bgt]:Rdest: $9 Src: Immediate:57 Label Address: 62
+[blt]:Rdest: $9 Src: Immediate:48 Label Address: 62
+[add]:Rdest: $8 Rsrc1: $8 SrcType:ImmediateNumber:1
+[j]:Label Address: 6
+[[_begin_parse_int]]:
+[sub]:Rdest: $8 Rsrc1: $8 SrcType:ImmediateNumber:1
+[[_parsing_int]]:
+[blt]:Rdest: $8 Src: Register: $4 Label Address: 64
+[lb]:Rdest: $9 Rsrc: $8 Offset:0
+[sub]:Rdest: $9 Rsrc1: $9 SrcType:ImmediateNumber:48
+[mul]:Rdest: $9 Rsrc1: $	 SrcType:Register: $10
+[add]:Rdest: $2 Rsrc1: $2 SrcType:Register: $9
+[mul]:Rdest: $10 Rsrc1: $
+ SrcType:ImmediateNumber:10
+[sub]:Rdest: $8 Rsrc1: $8 SrcType:ImmediateNumber:1
+[j]:Label Address: 6
+[[_finish_parse_int]]:
+[jr]:Rsrc: $31
+[[_func_____built_in_string_concatenate]]:
+[lw]:Rdest: $4 Rsrc: $29 Offset:-4
+[lw]:Rdest: $5 Rsrc: $29 Offset:-8
+[subu]:Rdest: $29 Rsrc1: $29 SrcType:ImmediateNumber:4
+[sw]:Rdest: $31 Rsrc: $29 Offset:0
+[move]:Rdest: $10 Rsrc1: $10
+[move]:Rdest: $11 Rsrc1: $11
+[lw]:Rdest: $8 Rsrc: $4 Offset:-4
+[lw]:Rdest: $9 Rsrc: $5 Offset:-4
+[add]:Rdest: $13 Rsrc1: $8 SrcType:Register: $9
+[add]:Rdest: $4 Rsrc1: $13 SrcType:ImmediateNumber:5
+[li]:Rdest: $2  (immediate)Src:9
+[syscall]:
+[sw]:Rdest: $13 Rsrc: $2 Offset:0
+[add]:Rdest: $2 Rsrc1: $2 SrcType:ImmediateNumber:4
+[move]:Rdest: $12 Rsrc1: $12
+[move]:Rdest: $4 Rsrc1: $4
+[move]:Rdest: $5 Rsrc1: $5
+[jal]:Label Address: 6
+[move]:Rdest: $4 Rsrc1: $4
+[add]:Rdest: $5 Rsrc1: $12 SrcType:Register: $8
+[jal]:Label Address: 6
+[move]:Rdest: $2 Rsrc1: $2
+[lw]:Rdest: $31 Rsrc: $29 Offset:0
+[addu]:Rdest: $29 Rsrc1: $29 SrcType:ImmediateNumber:4
+[jr]:Rsrc: $31
+[[_func_____built_in_toString]]:
+[lw]:Rdest: $4 Rsrc: $29 Offset:-4
+[li]:Rdest: $8  (immediate)Src:0
+[[bge]]:
+[li]:Rdest: $8  (immediate)Src:1
+[neg]:Rdest: $4 Rsrc1: $4
+[[_skip_set_less_than_zero]]:
+[beqz]:Rdest: $4 Label Address: 69
+[li]:Rdest: $9  (immediate)Src:0
+[move]:Rdest: $10 Rsrc1: $10
+[move]:Rdest: $11 Rsrc1: $11
+[li]:Rdest: $13  (immediate)Src:10
+[[_begin_count_digit]]:
+[div]:Rdest: $10 SrcType:ImmediateNumber:13
+[mflo]:Rsrc: $2
+[mfhi]:Rsrc: $3
+[bgtz]:Rdest: $2 Label Address: 71
+[bgtz]:Rdest: $3 Label Address: 71
+[j]:Label Address: 6
+[[_not_yet]]:
+[add]:Rdest: $9 Rsrc1: $9 SrcType:ImmediateNumber:1
+[move]:Rdest: $10 Rsrc1: $10
+[j]:Label Address: 6
+[[_yet]]:
+[beqz]:Rdest: $8 Label Address: 73
+[add]:Rdest: $9 Rsrc1: $9 SrcType:ImmediateNumber:1
+[[_skip_reserve_neg]]:
+[add]:Rdest: $4 Rsrc1: $9 SrcType:ImmediateNumber:5
+[li]:Rdest: $2  (immediate)Src:9
+[syscall]:
+[sw]:Rdest: $9 Rsrc: $2 Offset:0
+[add]:Rdest: $2 Rsrc1: $2 SrcType:ImmediateNumber:4
+[add]:Rdest: $9 Rsrc1: $9 SrcType:Register: $2
+[sb]:Rdest: $0 Rsrc: $9 Offset:0
+[sub]:Rdest: $9 Rsrc1: $9 SrcType:ImmediateNumber:1
+[[_continue_toString]]:
+[div]:Rdest: $11 SrcType:ImmediateNumber:13
+[mfhi]:Rsrc: $3
+[add]:Rdest: $3 Rsrc1: $3 SrcType:ImmediateNumber:48
+[sb]:Rdest: $3 Rsrc: $9 Offset:0
+[sub]:Rdest: $9 Rsrc1: $9 SrcType:ImmediateNumber:1
+[mflo]:Rsrc: $11
+[bnez]:Rdest: $11 Label Address: 74
+[beqz]:Rdest: $8 Label Address: 75
+[li]:Rdest: $3  (immediate)Src:45
+[sb]:Rdest: $3 Rsrc: $9 Offset:0
+[[_skip_place_neg]]:
+[jr]:Rsrc: $31
+[[_set_zero]]:
+[li]:Rdest: $4  (immediate)Src:6
+[li]:Rdest: $2  (immediate)Src:9
+[syscall]:
+[li]:Rdest: $4  (immediate)Src:1
+[sw]:Rdest: $4 Rsrc: $2 Offset:0
+[add]:Rdest: $2 Rsrc1: $2 SrcType:ImmediateNumber:4
+[li]:Rdest: $4  (immediate)Src:48
+[sb]:Rdest: $4 Rsrc: $2 Offset:0
+[jr]:Rsrc: $31
+[Dump Static Memory From Low To High]
+1 10 0 0 0 0 
+[Dump Data Labels In Code Squence]
+ : -1
+_begin_count_digit : 441
+_begin_count_string_length : 374
+_begin_loop_0 : 31
+_begin_loop_1 : 84
+_begin_loop_2 : 125
+_begin_loop_3 : 182
+_begin_loop_4 : 267
+_begin_loop_5 : 290
+_begin_loop_6 : 318
+_begin_parse_int : 403
+_begin_string_copy : 342
+_buffer : 20
+_buffer_init : 0
+_continue_loop0 : 50
+_continue_loop1 : 97
+_continue_loop2 : 138
+_continue_loop3 : 201
+_continue_loop4 : 284
+_continue_loop5 : 305
+_continue_loop6 : 333
+_continue_toString : 458
+_count_number_pos : 398
+_count_string_length : 373
+_end_func_____built_in_println : 245
+_end_func_____built_in_string_equal : 103
+_end_func_____built_in_string_greater : 161
+_end_func_____built_in_string_greater_equal : 232
+_end_func_____built_in_string_inequal : 144
+_end_func_____built_in_string_less : 62
+_end_func_____built_in_string_less_equal : 215
+_end_func_main : 338
+_end_if_0 : 30
+_end_if_1 : 50
+_end_if_2 : 79
+_end_if_3 : 97
+_end_if_4 : 120
+_end_if_5 : 138
+_end_if_6 : 181
+_end_if_7 : 201
+_end_loop_0 : 54
+_end_loop_1 : 101
+_end_loop_2 : 142
+_end_loop_3 : 205
+_end_loop_4 : 289
+_end_loop_5 : 310
+_end_loop_6 : 338
+_exit_count_string_length : 378
+_exit_string_copy : 348
+_finish_parse_int : 412
+_func_____built_in_getString : 380
+_func_____built_in_parseInt : 396
+_func_____built_in_println : 236
+_func_____built_in_string_concatenate : 413
+_func_____built_in_string_equal : 66
+_func_____built_in_string_greater : 148
+_func_____built_in_string_greater_equal : 219
+_func_____built_in_string_inequal : 107
+_func_____built_in_string_less : 14
+_func_____built_in_string_less_equal : 165
+_func_____built_in_substring : 350
+_func_____built_in_toString : 436
+_func_main : 249
+_not_yet : 447
+_parsing_int : 404
+_set_zero : 468
+_skip_place_neg : 467
+_skip_reserve_neg : 452
+_skip_set_less_than_zero : 438
+_static_0 : 4
+_static_1 : 16
+_static_2 : 12
+_string_copy : 342
+_yet : 450
+bge : 437
+main : 2
+[Change To Data Mode From Data Mode]
+[.word]:1
+[.asciiz]:
+
+[.asciiz]:\0
+[.align]:2
+[.word]:0
+[.asciiz]:\0
+[.align]:2
+[.word]:0
+[Change To Data Mode From Data Mode]
+[.word]:0
+[Change To Text Mode From Data Mode]
+[[_buffer_init]]:
+[li]:Rdest: $4  (immediate)Src:256
+[li]:Rdest: $2  (immediate)Src:9
+[syscall]:
+[sw]:Rdest: $2 Label Address: 3
+[jr]:Rsrc: $31
+[[main]]:
+[jal]:Label Address: 6
+[add]:Rdest: $30 Rsrc1: $0 SrcType:Register: $29
+[li]:Rdest: $8  (immediate)Src:4
+[add]:Rdest: $9 Rsrc1: $8 SrcType:ImmediateNumber:1
+[mul]:Rdest: $10 Rsrc1: $	 SrcType:ImmediateNumber:4
+[li]:Rdest: $2  (immediate)Src:9
+[move]:Rdest: $4 Rsrc1: $4
+[syscall]:
+[sw]:Rdest: $2 Rsrc: $30 Offset:-12
+[li]:Rdest: $8  (immediate)Src:4
+[lw]:Rdest: $9 Rsrc: $30 Offset:-12
+[sw]:Rdest: $8 Rsrc: $9 Offset:0
+[add]:Rdest: $10 Rsrc1: $9 SrcType:ImmediateNumber:4
+[sw]:Rdest: $10 Label Address: 2
+[jal]:Label Address: 6
+[move]:Rdest: $4 Rsrc1: $4
+[li]:Rdest: $2  (immediate)Src:17
+[syscall]:
+[[_func_____built_in_string_less]]:
+[sw]:Rdest: $30 Rsrc: $29 Offset:-212
+[add]:Rdest: $30 Rsrc1: $29 SrcType:ImmediateNumber:-4
+[add]:Rdest: $29 Rsrc1: $30 SrcType:ImmediateNumber:-216
+[sw]:Rdest: $31 Rsrc: $29 Offset:0
+[lw]:Rdest: $8 Rsrc: $30 Offset:0
+[sub]:Rdest: $9 Rsrc1: $8 SrcType:ImmediateNumber:4
+[lw]:Rdest: $10 Rsrc: $9 Offset:0
+[lw]:Rdest: $11 Rsrc: $30 Offset:-4
+[sub]:Rdest: $12 Rsrc1: $11 SrcType:ImmediateNumber:4
+[lw]:Rdest: $13 Rsrc: $12 Offset:0
+[sw]:Rdest: $10 Rsrc: $30 Offset:-8
+[ble]:Rdest: $10 Src: Register: $13 Label Address: 8
+[lw]:Rdest: $8 Rsrc: $30 Offset:-4
+[sub]:Rdest: $9 Rsrc1: $8 SrcType:ImmediateNumber:4
+[lw]:Rdest: $10 Rsrc: $9 Offset:0
+[sw]:Rdest: $10 Rsrc: $30 Offset:-8
+[[_end_if_0]]:
+[li]:Rdest: $8  (immediate)Src:0
+[sw]:Rdest: $8 Rsrc: $30 Offset:-12
+[[_begin_loop_0]]:
+[lw]:Rdest: $8 Rsrc: $30 Offset:-12
+[lw]:Rdest: $9 Rsrc: $30 Offset:-8
+[bge]:Rdest: $8 Src: Register: $9 Label Address: 10
+[lw]:Rdest: $8 Rsrc: $30 Offset:0
+[lw]:Rdest: $9 Rsrc: $30 Offset:-12
+[add]:Rdest: $10 Rsrc1: $8 SrcType:Register: $9
+[lb]:Rdest: $11 Rsrc: $10 Offset:0
+[lw]:Rdest: $12 Rsrc: $30 Offset:-4
+[add]:Rdest: $13 Rsrc1: $12 SrcType:Register: $9
+[lb]:Rdest: $14 Rsrc: $13 Offset:0
+[sw]:Rdest: $11 Rsrc: $30 Offset:-16
+[sw]:Rdest: $14 Rsrc: $30 Offset:-20
+[beq]:Rdest: $11 Src: Register: $14 Label Address: 11
+[lw]:Rdest: $8 Rsrc: $30 Offset:-16
+[lw]:Rdest: $9 Rsrc: $30 Offset:-20
+[slt]:Rdest: $10 Rsrc1: $8 SrcType:Register: $9
+[move]:Rdest: $2 Rsrc1: $2
+[sw]:Rdest: $10 Rsrc: $30 Offset:-76
+[b]:Label Address: 6
+[[_end_if_1]]:
+[[_continue_loop0]]:
+[lw]:Rdest: $8 Rsrc: $30 Offset:-12
+[add]:Rdest: $8 Rsrc1: $8 SrcType:ImmediateNumber:1
+[sw]:Rdest: $8 Rsrc: $30 Offset:-12
+[b]:Label Address: 6
+[[_end_loop_0]]:
+[lw]:Rdest: $8 Rsrc: $30 Offset:-4
+[sub]:Rdest: $9 Rsrc1: $8 SrcType:ImmediateNumber:4
+[lw]:Rdest: $10 Rsrc: $9 Offset:0
+[lw]:Rdest: $11 Rsrc: $30 Offset:-8
+[slt]:Rdest: $12 Rsrc1: $11 SrcType:Register: $10
+[move]:Rdest: $2 Rsrc1: $2
+[sw]:Rdest: $12 Rsrc: $30 Offset:-88
+[b]:Label Address: 6
+[[_end_func_____built_in_string_less]]:
+[lw]:Rdest: $31 Rsrc: $29 Offset:0
+[add]:Rdest: $29 Rsrc1: $30 SrcType:ImmediateNumber:4
+[lw]:Rdest: $30 Rsrc: $30 Offset:-208
+[jr]:Rsrc: $31
+[[_func_____built_in_string_equal]]:
+[sw]:Rdest: $30 Rsrc: $29 Offset:-188
+[add]:Rdest: $30 Rsrc1: $29 SrcType:ImmediateNumber:-4
+[add]:Rdest: $29 Rsrc1: $30 SrcType:ImmediateNumber:-192
+[sw]:Rdest: $31 Rsrc: $29 Offset:0
+[lw]:Rdest: $8 Rsrc: $30 Offset:0
+[sub]:Rdest: $9 Rsrc1: $8 SrcType:ImmediateNumber:4
+[lw]:Rdest: $10 Rsrc: $9 Offset:0
+[lw]:Rdest: $11 Rsrc: $30 Offset:-4
+[sub]:Rdest: $12 Rsrc1: $11 SrcType:ImmediateNumber:4
+[lw]:Rdest: $13 Rsrc: $12 Offset:0
+[beq]:Rdest: $10 Src: Register: $13 Label Address: 15
+[move]:Rdest: $2 Rsrc1: $2
+[b]:Label Address: 6
+[[_end_if_2]]:
+[lw]:Rdest: $8 Rsrc: $30 Offset:0
+[sub]:Rdest: $9 Rsrc1: $8 SrcType:ImmediateNumber:4
+[lw]:Rdest: $10 Rsrc: $9 Offset:0
+[li]:Rdest: $11  (immediate)Src:0
+[sw]:Rdest: $10 Rsrc: $30 Offset:-12
+[sw]:Rdest: $11 Rsrc: $30 Offset:-8
+[[_begin_loop_1]]:
+[lw]:Rdest: $8 Rsrc: $30 Offset:-8
+[lw]:Rdest: $9 Rsrc: $30 Offset:-12
+[bge]:Rdest: $8 Src: Register: $9 Label Address: 17
+[lw]:Rdest: $8 Rsrc: $30 Offset:0
+[lw]:Rdest: $9 Rsrc: $30 Offset:-8
+[add]:Rdest: $10 Rsrc1: $8 SrcType:Register: $9
+[lb]:Rdest: $11 Rsrc: $10 Offset:0
+[lw]:Rdest: $12 Rsrc: $30 Offset:-4
+[add]:Rdest: $13 Rsrc1: $12 SrcType:Register: $9
+[lb]:Rdest: $14 Rsrc: $13 Offset:0
+[beq]:Rdest: $11 Src: Register: $14 Label Address: 18
+[move]:Rdest: $2 Rsrc1: $2
+[b]:Label Address: 6
+[[_end_if_3]]:
+[[_continue_loop1]]:
+[lw]:Rdest: $8 Rsrc: $30 Offset:-8
+[add]:Rdest: $8 Rsrc1: $8 SrcType:ImmediateNumber:1
+[sw]:Rdest: $8 Rsrc: $30 Offset:-8
+[b]:Label Address: 6
+[[_end_loop_1]]:
+[li]:Rdest: $8  (immediate)Src:1
+[move]:Rdest: $2 Rsrc1: $2
+[b]:Label Address: 6
+[[_end_func_____built_in_string_equal]]:
+[lw]:Rdest: $31 Rsrc: $29 Offset:0
+[add]:Rdest: $29 Rsrc1: $30 SrcType:ImmediateNumber:4
+[lw]:Rdest: $30 Rsrc: $30 Offset:-184
+[jr]:Rsrc: $31
+[[_func_____built_in_string_inequal]]:
+[sw]:Rdest: $30 Rsrc: $29 Offset:-188
+[add]:Rdest: $30 Rsrc1: $29 SrcType:ImmediateNumber:-4
+[add]:Rdest: $29 Rsrc1: $30 SrcType:ImmediateNumber:-192
+[sw]:Rdest: $31 Rsrc: $29 Offset:0
+[lw]:Rdest: $8 Rsrc: $30 Offset:0
+[sub]:Rdest: $9 Rsrc1: $8 SrcType:ImmediateNumber:4
+[lw]:Rdest: $10 Rsrc: $9 Offset:0
+[lw]:Rdest: $11 Rsrc: $30 Offset:-4
+[sub]:Rdest: $12 Rsrc1: $11 SrcType:ImmediateNumber:4
+[lw]:Rdest: $13 Rsrc: $12 Offset:0
+[beq]:Rdest: $10 Src: Register: $13 Label Address: 22
+[li]:Rdest: $8  (immediate)Src:1
+[move]:Rdest: $2 Rsrc1: $2
+[b]:Label Address: 6
+[[_end_if_4]]:
+[lw]:Rdest: $8 Rsrc: $30 Offset:0
+[sub]:Rdest: $9 Rsrc1: $8 SrcType:ImmediateNumber:4
+[lw]:Rdest: $10 Rsrc: $9 Offset:0
+[li]:Rdest: $11  (immediate)Src:0
+[sw]:Rdest: $10 Rsrc: $30 Offset:-12
+[sw]:Rdest: $11 Rsrc: $30 Offset:-8
+[[_begin_loop_2]]:
+[lw]:Rdest: $8 Rsrc: $30 Offset:-8
+[lw]:Rdest: $9 Rsrc: $30 Offset:-12
+[bge]:Rdest: $8 Src: Register: $9 Label Address: 24
+[lw]:Rdest: $8 Rsrc: $30 Offset:0
+[lw]:Rdest: $9 Rsrc: $30 Offset:-8
+[add]:Rdest: $10 Rsrc1: $8 SrcType:Register: $9
+[lb]:Rdest: $11 Rsrc: $10 Offset:0
+[lw]:Rdest: $12 Rsrc: $30 Offset:-4
+[add]:Rdest: $13 Rsrc1: $12 SrcType:Register: $9
+[lb]:Rdest: $14 Rsrc: $13 Offset:0
+[beq]:Rdest: $11 Src: Register: $14 Label Address: 25
+[li]:Rdest: $8  (immediate)Src:1
+[move]:Rdest: $2 Rsrc1: $2
+[b]:Label Address: 6
+[[_end_if_5]]:
+[[_continue_loop2]]:
+[lw]:Rdest: $8 Rsrc: $30 Offset:-8
+[add]:Rdest: $8 Rsrc1: $8 SrcType:ImmediateNumber:1
+[sw]:Rdest: $8 Rsrc: $30 Offset:-8
+[b]:Label Address: 6
+[[_end_loop_2]]:
+[move]:Rdest: $2 Rsrc1: $2
+[b]:Label Address: 6
+[[_end_func_____built_in_string_inequal]]:
+[lw]:Rdest: $31 Rsrc: $29 Offset:0
+[add]:Rdest: $29 Rsrc1: $30 SrcType:ImmediateNumber:4
+[lw]:Rdest: $30 Rsrc: $30 Offset:-184
+[jr]:Rsrc: $31
+[[_func_____built_in_string_greater]]:
+[sw]:Rdest: $30 Rsrc: $29 Offset:-132
+[add]:Rdest: $30 Rsrc1: $29 SrcType:ImmediateNumber:-4
+[add]:Rdest: $29 Rsrc1: $30 SrcType:ImmediateNumber:-136
+[sw]:Rdest: $31 Rsrc: $29 Offset:0
+[lw]:Rdest: $8 Rsrc: $30 Offset:-4
+[sw]:Rdest: $8 Rsrc: $29 Offset:-4
+[lw]:Rdest: $9 Rsrc: $30 Offset:0
+[sw]:Rdest: $9 Rsrc: $29 Offset:-8
+[jal]:Label Address: 6
+[sw]:Rdest: $2 Rsrc: $30 Offset:-8
+[lw]:Rdest: $8 Rsrc: $30 Offset:-8
+[move]:Rdest: $2 Rsrc1: $2
+[b]:Label Address: 6
+[[_end_func_____built_in_string_greater]]:
+[lw]:Rdest: $31 Rsrc: $29 Offset:0
+[add]:Rdest: $29 Rsrc1: $30 SrcType:ImmediateNumber:4
+[lw]:Rdest: $30 Rsrc: $30 Offset:-128
+[jr]:Rsrc: $31
+[[_func_____built_in_string_less_equal]]:
+[sw]:Rdest: $30 Rsrc: $29 Offset:-220
+[add]:Rdest: $30 Rsrc1: $29 SrcType:ImmediateNumber:-4
+[add]:Rdest: $29 Rsrc1: $30 SrcType:ImmediateNumber:-224
+[sw]:Rdest: $31 Rsrc: $29 Offset:0
+[lw]:Rdest: $8 Rsrc: $30 Offset:0
+[sub]:Rdest: $9 Rsrc1: $8 SrcType:ImmediateNumber:4
+[lw]:Rdest: $10 Rsrc: $9 Offset:0
+[lw]:Rdest: $11 Rsrc: $30 Offset:-4
+[sub]:Rdest: $12 Rsrc1: $11 SrcType:ImmediateNumber:4
+[lw]:Rdest: $13 Rsrc: $12 Offset:0
+[sw]:Rdest: $10 Rsrc: $30 Offset:-8
+[ble]:Rdest: $10 Src: Register: $13 Label Address: 31
+[lw]:Rdest: $8 Rsrc: $30 Offset:-4
+[sub]:Rdest: $9 Rsrc1: $8 SrcType:ImmediateNumber:4
+[lw]:Rdest: $10 Rsrc: $9 Offset:0
+[sw]:Rdest: $10 Rsrc: $30 Offset:-8
+[[_end_if_6]]:
+[li]:Rdest: $8  (immediate)Src:0
+[sw]:Rdest: $8 Rsrc: $30 Offset:-12
+[[_begin_loop_3]]:
+[lw]:Rdest: $8 Rsrc: $30 Offset:-12
+[lw]:Rdest: $9 Rsrc: $30 Offset:-8
+[bge]:Rdest: $8 Src: Register: $9 Label Address: 33
+[lw]:Rdest: $8 Rsrc: $30 Offset:0
+[lw]:Rdest: $9 Rsrc: $30 Offset:-12
+[add]:Rdest: $10 Rsrc1: $8 SrcType:Register: $9
+[lb]:Rdest: $11 Rsrc: $10 Offset:0
+[lw]:Rdest: $12 Rsrc: $30 Offset:-4
+[add]:Rdest: $13 Rsrc1: $12 SrcType:Register: $9
+[lb]:Rdest: $14 Rsrc: $13 Offset:0
+[sw]:Rdest: $11 Rsrc: $30 Offset:-16
+[sw]:Rdest: $14 Rsrc: $30 Offset:-20
+[beq]:Rdest: $11 Src: Register: $14 Label Address: 34
+[lw]:Rdest: $8 Rsrc: $30 Offset:-16
+[lw]:Rdest: $9 Rsrc: $30 Offset:-20
+[slt]:Rdest: $10 Rsrc1: $8 SrcType:Register: $9
+[move]:Rdest: $2 Rsrc1: $2
+[sw]:Rdest: $10 Rsrc: $30 Offset:-76
+[b]:Label Address: 6
+[[_end_if_7]]:
+[[_continue_loop3]]:
+[lw]:Rdest: $8 Rsrc: $30 Offset:-12
+[add]:Rdest: $8 Rsrc1: $8 SrcType:ImmediateNumber:1
+[sw]:Rdest: $8 Rsrc: $30 Offset:-12
+[b]:Label Address: 6
+[[_end_loop_3]]:
+[lw]:Rdest: $8 Rsrc: $30 Offset:0
+[sub]:Rdest: $9 Rsrc1: $8 SrcType:ImmediateNumber:4
+[lw]:Rdest: $10 Rsrc: $9 Offset:0
+[lw]:Rdest: $11 Rsrc: $30 Offset:-4
+[sub]:Rdest: $12 Rsrc1: $11 SrcType:ImmediateNumber:4
+[lw]:Rdest: $13 Rsrc: $12 Offset:0
+[sle]:Rdest: $14 Rsrc1: $10 SrcType:Register: $13
+[move]:Rdest: $2 Rsrc1: $2
+[sw]:Rdest: $14 Rsrc: $30 Offset:-96
+[b]:Label Address: 6
+[[_end_func_____built_in_string_less_equal]]:
+[lw]:Rdest: $31 Rsrc: $29 Offset:0
+[add]:Rdest: $29 Rsrc1: $30 SrcType:ImmediateNumber:4
+[lw]:Rdest: $30 Rsrc: $30 Offset:-216
+[jr]:Rsrc: $31
+[[_func_____built_in_string_greater_equal]]:
+[sw]:Rdest: $30 Rsrc: $29 Offset:-132
+[add]:Rdest: $30 Rsrc1: $29 SrcType:ImmediateNumber:-4
+[add]:Rdest: $29 Rsrc1: $30 SrcType:ImmediateNumber:-136
+[sw]:Rdest: $31 Rsrc: $29 Offset:0
+[lw]:Rdest: $8 Rsrc: $30 Offset:-4
+[sw]:Rdest: $8 Rsrc: $29 Offset:-4
+[lw]:Rdest: $9 Rsrc: $30 Offset:0
+[sw]:Rdest: $9 Rsrc: $29 Offset:-8
+[jal]:Label Address: 6
+[sw]:Rdest: $2 Rsrc: $30 Offset:-8
+[lw]:Rdest: $8 Rsrc: $30 Offset:-8
+[move]:Rdest: $2 Rsrc1: $2
+[b]:Label Address: 6
+[[_end_func_____built_in_string_greater_equal]]:
+[lw]:Rdest: $31 Rsrc: $29 Offset:0
+[add]:Rdest: $29 Rsrc1: $30 SrcType:ImmediateNumber:4
+[lw]:Rdest: $30 Rsrc: $30 Offset:-128
+[jr]:Rsrc: $31
+[[_func_____built_in_println]]:
+[sw]:Rdest: $30 Rsrc: $29 Offset:-128
+[add]:Rdest: $30 Rsrc1: $29 SrcType:ImmediateNumber:-4
+[add]:Rdest: $29 Rsrc1: $30 SrcType:ImmediateNumber:-132
+[sw]:Rdest: $31 Rsrc: $29 Offset:0
+[lw]:Rdest: $8 Rsrc: $30 Offset:0
+[li]:Rdest: $2  (immediate)Src:4
+[move]:Rdest: $4 Rsrc1: $4
+[syscall]:
+[la]:Rdest: $8 Label Address: 0
+[move]:Rdest: $9 Rsrc1: $9
+[li]:Rdest: $2  (immediate)Src:4
+[move]:Rdest: $4 Rsrc1: $4
+[syscall]:
+[[_end_func_____built_in_println]]:
+[lw]:Rdest: $31 Rsrc: $29 Offset:0
+[add]:Rdest: $29 Rsrc1: $30 SrcType:ImmediateNumber:4
+[lw]:Rdest: $30 Rsrc: $30 Offset:-124
+[jr]:Rsrc: $31
+[[_func_main]]:
+[sw]:Rdest: $30 Rsrc: $29 Offset:-256
+[add]:Rdest: $30 Rsrc1: $29 SrcType:ImmediateNumber:-4
+[add]:Rdest: $29 Rsrc1: $30 SrcType:ImmediateNumber:-260
+[sw]:Rdest: $31 Rsrc: $29 Offset:0
+[lw]:Rdest: $8 Label Address: 2
+[sub]:Rdest: $9 Rsrc1: $8 SrcType:ImmediateNumber:4
+[lw]:Rdest: $10 Rsrc: $9 Offset:0
+[add]:Rdest: $11 Rsrc1: $10 SrcType:ImmediateNumber:1
+[mul]:Rdest: $12 Rsrc1: $
+                          SrcType:ImmediateNumber:4
+[li]:Rdest: $2  (immediate)Src:9
+[move]:Rdest: $4 Rsrc1: $4
+[sw]:Rdest: $10 Rsrc: $30 Offset:-12
+[syscall]:
+[sw]:Rdest: $2 Rsrc: $30 Offset:-24
+[lw]:Rdest: $8 Rsrc: $30 Offset:-12
+[lw]:Rdest: $9 Rsrc: $30 Offset:-24
+[sw]:Rdest: $8 Rsrc: $9 Offset:0
+[add]:Rdest: $10 Rsrc1: $9 SrcType:ImmediateNumber:4
+[li]:Rdest: $11  (immediate)Src:0
+[sw]:Rdest: $10 Rsrc: $30 Offset:0
+[sw]:Rdest: $11 Rsrc: $30 Offset:-4
+[[_begin_loop_4]]:
+[lw]:Rdest: $8 Label Address: 2
+[sub]:Rdest: $9 Rsrc1: $8 SrcType:ImmediateNumber:4
+[lw]:Rdest: $10 Rsrc: $9 Offset:0
+[lw]:Rdest: $11 Rsrc: $30 Offset:-4
+[bge]:Rdest: $11 Src: Register: $10 Label Address: 43
+[lw]:Rdest: $8 Rsrc: $30 Offset:-4
+[mul]:Rdest: $9 Rsrc1:  SrcType:ImmediateNumber:4
+[lw]:Rdest: $10 Label Address: 2
+[add]:Rdest: $11 Rsrc1: $10 SrcType:Register: $9
+[sw]:Rdest: $0 Rsrc: $11 Offset:0
+[li]:Rdest: $2  (immediate)Src:5
+[syscall]:
+[sw]:Rdest: $2 Rsrc: $30 Offset:-60
+[lw]:Rdest: $8 Rsrc: $30 Offset:-4
+[mul]:Rdest: $9 Rsrc1:  SrcType:ImmediateNumber:4
+[lw]:Rdest: $10 Rsrc: $30 Offset:0
+[add]:Rdest: $11 Rsrc1: $10 SrcType:Register: $9
+[lw]:Rdest: $12 Rsrc: $30 Offset:-60
+[sw]:Rdest: $12 Rsrc: $11 Offset:0
+[[_continue_loop4]]:
+[lw]:Rdest: $8 Rsrc: $30 Offset:-4
+[add]:Rdest: $8 Rsrc1: $8 SrcType:ImmediateNumber:1
+[move]:Rdest: $8 Rsrc1: $8
+[sw]:Rdest: $8 Rsrc: $30 Offset:-4
+[b]:Label Address: 6
+[[_end_loop_4]]:
+[li]:Rdest: $8  (immediate)Src:0
+[sw]:Rdest: $8 Rsrc: $30 Offset:-4
+[[_begin_loop_5]]:
+[lw]:Rdest: $8 Label Address: 2
+[sub]:Rdest: $9 Rsrc1: $8 SrcType:ImmediateNumber:4
+[lw]:Rdest: $10 Rsrc: $9 Offset:0
+[lw]:Rdest: $11 Rsrc: $30 Offset:-4
+[bge]:Rdest: $11 Src: Register: $10 Label Address: 46
+[lw]:Rdest: $8 Rsrc: $30 Offset:-4
+[mul]:Rdest: $9 Rsrc1:  SrcType:ImmediateNumber:4
+[lw]:Rdest: $10 Label Address: 2
+[add]:Rdest: $11 Rsrc1: $10 SrcType:Register: $9
+[lw]:Rdest: $12 Rsrc: $11 Offset:0
+[sw]:Rdest: $12 Rsrc: $29 Offset:-4
+[jal]:Label Address: 6
+[sw]:Rdest: $2 Rsrc: $30 Offset:-92
+[lw]:Rdest: $8 Rsrc: $30 Offset:-92
+[li]:Rdest: $2  (immediate)Src:4
+[move]:Rdest: $4 Rsrc1: $4
+[syscall]:
+[[_continue_loop5]]:
+[lw]:Rdest: $8 Rsrc: $30 Offset:-4
+[add]:Rdest: $8 Rsrc1: $8 SrcType:ImmediateNumber:1
+[move]:Rdest: $8 Rsrc1: $8
+[sw]:Rdest: $8 Rsrc: $30 Offset:-4
+[b]:Label Address: 6
+[[_end_loop_5]]:
+[la]:Rdest: $8 Label Address: 1
+[move]:Rdest: $9 Rsrc1: $9
+[li]:Rdest: $2  (immediate)Src:4
+[move]:Rdest: $4 Rsrc1: $4
+[syscall]:
+[la]:Rdest: $8 Label Address: 0
+[li]:Rdest: $2  (immediate)Src:4
+[move]:Rdest: $4 Rsrc1: $4
+[syscall]:
+[lw]:Rdest: $8 Rsrc: $30 Offset:0
+[li]:Rdest: $9  (immediate)Src:0
+[sw]:Rdest: $8 Label Address: 2
+[sw]:Rdest: $9 Rsrc: $30 Offset:-4
+[[_begin_loop_6]]:
+[lw]:Rdest: $8 Label Address: 2
+[sub]:Rdest: $9 Rsrc1: $8 SrcType:ImmediateNumber:4
+[lw]:Rdest: $10 Rsrc: $9 Offset:0
+[lw]:Rdest: $11 Rsrc: $30 Offset:-4
+[bge]:Rdest: $11 Src: Register: $10 Label Address: 49
+[lw]:Rdest: $8 Rsrc: $30 Offset:-4
+[mul]:Rdest: $9 Rsrc1:  SrcType:ImmediateNumber:4
+[lw]:Rdest: $10 Label Address: 2
+[add]:Rdest: $11 Rsrc1: $10 SrcType:Register: $9
+[lw]:Rdest: $12 Rsrc: $11 Offset:0
+[sw]:Rdest: $12 Rsrc: $29 Offset:-4
+[jal]:Label Address: 6
+[sw]:Rdest: $2 Rsrc: $30 Offset:-128
+[lw]:Rdest: $8 Rsrc: $30 Offset:-128
+[li]:Rdest: $2  (immediate)Src:4
+[move]:Rdest: $4 Rsrc1: $4
+[syscall]:
+[[_continue_loop6]]:
+[lw]:Rdest: $8 Rsrc: $30 Offset:-4
+[add]:Rdest: $8 Rsrc1: $8 SrcType:ImmediateNumber:1
+[move]:Rdest: $8 Rsrc1: $8
+[sw]:Rdest: $8 Rsrc: $30 Offset:-4
+[b]:Label Address: 6
+[[_end_loop_6]]:
+[[_end_func_main]]:
+[lw]:Rdest: $31 Rsrc: $29 Offset:0
+[add]:Rdest: $29 Rsrc1: $30 SrcType:ImmediateNumber:4
+[lw]:Rdest: $30 Rsrc: $30 Offset:-252
+[jr]:Rsrc: $31
+[[_string_copy]]:
+[[_begin_string_copy]]:
+[lb]:Rdest: $2 Rsrc: $4 Offset:0
+[beqz]:Rdest: $2 Label Address: 54
+[sb]:Rdest: $2 Rsrc: $5 Offset:0
+[add]:Rdest: $4 Rsrc1: $4 SrcType:ImmediateNumber:1
+[add]:Rdest: $5 Rsrc1: $5 SrcType:ImmediateNumber:1
+[j]:Label Address: 6
+[[_exit_string_copy]]:
+[sb]:Rdest: $0 Rsrc: $5 Offset:0
+[jr]:Rsrc: $31
+[[_func_____built_in_substring]]:
+[lw]:Rdest: $4 Rsrc: $29 Offset:-4
+[lw]:Rdest: $5 Rsrc: $29 Offset:-8
+[lw]:Rdest: $6 Rsrc: $29 Offset:-12
+[subu]:Rdest: $29 Rsrc1: $29 SrcType:ImmediateNumber:4
+[sw]:Rdest: $31 Rsrc: $29 Offset:0
+[move]:Rdest: $8 Rsrc1: $8
+[sub]:Rdest: $9 Rsrc1: $6 SrcType:Register: $5
+[add]:Rdest: $9 Rsrc1: $9 SrcType:ImmediateNumber:1
+[add]:Rdest: $4 Rsrc1: $9 SrcType:ImmediateNumber:5
+[li]:Rdest: $2  (immediate)Src:9
+[syscall]:
+[sw]:Rdest: $9 Rsrc: $2 Offset:0
+[add]:Rdest: $2 Rsrc1: $2 SrcType:ImmediateNumber:4
+[add]:Rdest: $4 Rsrc1: $8 SrcType:Register: $5
+[add]:Rdest: $10 Rsrc1: $8 SrcType:Register: $6
+[lb]:Rdest: $11 Rsrc: $10 Offset:0
+[sb]:Rdest: $0 Rsrc: $10 Offset:0
+[move]:Rdest: $5 Rsrc1: $5
+[move]:Rdest: $12 Rsrc1: $12
+[jal]:Label Address: 6
+[move]:Rdest: $2 Rsrc1: $2
+[sb]:Rdest: $11 Rsrc: $10 Offset:0
+[lw]:Rdest: $31 Rsrc: $29 Offset:0
+[addu]:Rdest: $29 Rsrc1: $29 SrcType:ImmediateNumber:4
+[jr]:Rsrc: $31
+[[_count_string_length]]:
+[move]:Rdest: $2 Rsrc1: $2
+[[_begin_count_string_length]]:
+[lb]:Rdest: $3 Rsrc: $4 Offset:0
+[beqz]:Rdest: $3 Label Address: 58
+[add]:Rdest: $4 Rsrc1: $4 SrcType:ImmediateNumber:1
+[j]:Label Address: 6
+[[_exit_count_string_length]]:
+[sub]:Rdest: $2 Rsrc1: $4 SrcType:Register: $2
+[jr]:Rsrc: $31
+[[_func_____built_in_getString]]:
+[subu]:Rdest: $29 Rsrc1: $29 SrcType:ImmediateNumber:4
+[sw]:Rdest: $31 Rsrc: $29 Offset:0
+[lw]:Rdest: $4 Label Address: 3
+[li]:Rdest: $5  (immediate)Src:255
+[li]:Rdest: $2  (immediate)Src:8
+[syscall]:
+[jal]:Label Address: 6
+[move]:Rdest: $5 Rsrc1: $5
+[add]:Rdest: $4 Rsrc1: $2 SrcType:ImmediateNumber:5
+[li]:Rdest: $2  (immediate)Src:9
+[syscall]:
+[sw]:Rdest: $5 Rsrc: $2 Offset:0
+[add]:Rdest: $2 Rsrc1: $2 SrcType:ImmediateNumber:4
+[lw]:Rdest: $4 Label Address: 3
+[move]:Rdest: $5 Rsrc1: $5
+[move]:Rdest: $8 Rsrc1: $8
+[jal]:Label Address: 6
+[move]:Rdest: $2 Rsrc1: $2
+[lw]:Rdest: $31 Rsrc: $29 Offset:0
+[addu]:Rdest: $29 Rsrc1: $29 SrcType:ImmediateNumber:4
+[jr]:Rsrc: $31
+[[_func_____built_in_parseInt]]:
+[lw]:Rdest: $4 Rsrc: $29 Offset:-4
+[li]:Rdest: $2  (immediate)Src:0
+[move]:Rdest: $8 Rsrc1: $8
+[li]:Rdest: $10  (immediate)Src:1
+[[_count_number_pos]]:
+[lb]:Rdest: $9 Rsrc: $8 Offset:0
+[bgt]:Rdest: $9 Src: Immediate:57 Label Address: 62
+[blt]:Rdest: $9 Src: Immediate:48 Label Address: 62
+[add]:Rdest: $8 Rsrc1: $8 SrcType:ImmediateNumber:1
+[j]:Label Address: 6
+[[_begin_parse_int]]:
+[sub]:Rdest: $8 Rsrc1: $8 SrcType:ImmediateNumber:1
+[[_parsing_int]]:
+[blt]:Rdest: $8 Src: Register: $4 Label Address: 64
+[lb]:Rdest: $9 Rsrc: $8 Offset:0
+[sub]:Rdest: $9 Rsrc1: $9 SrcType:ImmediateNumber:48
+[mul]:Rdest: $9 Rsrc1: $	 SrcType:Register: $10
+[add]:Rdest: $2 Rsrc1: $2 SrcType:Register: $9
+[mul]:Rdest: $10 Rsrc1: $
+ SrcType:ImmediateNumber:10
+[sub]:Rdest: $8 Rsrc1: $8 SrcType:ImmediateNumber:1
+[j]:Label Address: 6
+[[_finish_parse_int]]:
+[jr]:Rsrc: $31
+[[_func_____built_in_string_concatenate]]:
+[lw]:Rdest: $4 Rsrc: $29 Offset:-4
+[lw]:Rdest: $5 Rsrc: $29 Offset:-8
+[subu]:Rdest: $29 Rsrc1: $29 SrcType:ImmediateNumber:4
+[sw]:Rdest: $31 Rsrc: $29 Offset:0
+[move]:Rdest: $10 Rsrc1: $10
+[move]:Rdest: $11 Rsrc1: $11
+[lw]:Rdest: $8 Rsrc: $4 Offset:-4
+[lw]:Rdest: $9 Rsrc: $5 Offset:-4
+[add]:Rdest: $13 Rsrc1: $8 SrcType:Register: $9
+[add]:Rdest: $4 Rsrc1: $13 SrcType:ImmediateNumber:5
+[li]:Rdest: $2  (immediate)Src:9
+[syscall]:
+[sw]:Rdest: $13 Rsrc: $2 Offset:0
+[add]:Rdest: $2 Rsrc1: $2 SrcType:ImmediateNumber:4
+[move]:Rdest: $12 Rsrc1: $12
+[move]:Rdest: $4 Rsrc1: $4
+[move]:Rdest: $5 Rsrc1: $5
+[jal]:Label Address: 6
+[move]:Rdest: $4 Rsrc1: $4
+[add]:Rdest: $5 Rsrc1: $12 SrcType:Register: $8
+[jal]:Label Address: 6
+[move]:Rdest: $2 Rsrc1: $2
+[lw]:Rdest: $31 Rsrc: $29 Offset:0
+[addu]:Rdest: $29 Rsrc1: $29 SrcType:ImmediateNumber:4
+[jr]:Rsrc: $31
+[[_func_____built_in_toString]]:
+[lw]:Rdest: $4 Rsrc: $29 Offset:-4
+[li]:Rdest: $8  (immediate)Src:0
+[[bge]]:
+[li]:Rdest: $8  (immediate)Src:1
+[neg]:Rdest: $4 Rsrc1: $4
+[[_skip_set_less_than_zero]]:
+[beqz]:Rdest: $4 Label Address: 69
+[li]:Rdest: $9  (immediate)Src:0
+[move]:Rdest: $10 Rsrc1: $10
+[move]:Rdest: $11 Rsrc1: $11
+[li]:Rdest: $13  (immediate)Src:10
+[[_begin_count_digit]]:
+[div]:Rdest: $10 SrcType:ImmediateNumber:13
+[mflo]:Rsrc: $2
+[mfhi]:Rsrc: $3
+[bgtz]:Rdest: $2 Label Address: 71
+[bgtz]:Rdest: $3 Label Address: 71
+[j]:Label Address: 6
+[[_not_yet]]:
+[add]:Rdest: $9 Rsrc1: $9 SrcType:ImmediateNumber:1
+[move]:Rdest: $10 Rsrc1: $10
+[j]:Label Address: 6
+[[_yet]]:
+[beqz]:Rdest: $8 Label Address: 73
+[add]:Rdest: $9 Rsrc1: $9 SrcType:ImmediateNumber:1
+[[_skip_reserve_neg]]:
+[add]:Rdest: $4 Rsrc1: $9 SrcType:ImmediateNumber:5
+[li]:Rdest: $2  (immediate)Src:9
+[syscall]:
+[sw]:Rdest: $9 Rsrc: $2 Offset:0
+[add]:Rdest: $2 Rsrc1: $2 SrcType:ImmediateNumber:4
+[add]:Rdest: $9 Rsrc1: $9 SrcType:Register: $2
+[sb]:Rdest: $0 Rsrc: $9 Offset:0
+[sub]:Rdest: $9 Rsrc1: $9 SrcType:ImmediateNumber:1
+[[_continue_toString]]:
+[div]:Rdest: $11 SrcType:ImmediateNumber:13
+[mfhi]:Rsrc: $3
+[add]:Rdest: $3 Rsrc1: $3 SrcType:ImmediateNumber:48
+[sb]:Rdest: $3 Rsrc: $9 Offset:0
+[sub]:Rdest: $9 Rsrc1: $9 SrcType:ImmediateNumber:1
+[mflo]:Rsrc: $11
+[bnez]:Rdest: $11 Label Address: 74
+[beqz]:Rdest: $8 Label Address: 75
+[li]:Rdest: $3  (immediate)Src:45
+[sb]:Rdest: $3 Rsrc: $9 Offset:0
+[[_skip_place_neg]]:
+[jr]:Rsrc: $31
+[[_set_zero]]:
+[li]:Rdest: $4  (immediate)Src:6
+[li]:Rdest: $2  (immediate)Src:9
+[syscall]:
+[li]:Rdest: $4  (immediate)Src:1
+[sw]:Rdest: $4 Rsrc: $2 Offset:0
+[add]:Rdest: $2 Rsrc1: $2 SrcType:ImmediateNumber:4
+[li]:Rdest: $4  (immediate)Src:48
+[sb]:Rdest: $4 Rsrc: $2 Offset:0
+[jr]:Rsrc: $31
+[Dump Static Memory From Low To High]
+1 10 0 0 0 0 
+[Dump Data Labels In Code Squence]
+ : -1
+_begin_count_digit : 441
+_begin_count_string_length : 374
+_begin_loop_0 : 31
+_begin_loop_1 : 84
+_begin_loop_2 : 125
+_begin_loop_3 : 182
+_begin_loop_4 : 267
+_begin_loop_5 : 290
+_begin_loop_6 : 318
+_begin_parse_int : 403
+_begin_string_copy : 342
+_buffer : 20
+_buffer_init : 0
+_continue_loop0 : 50
+_continue_loop1 : 97
+_continue_loop2 : 138
+_continue_loop3 : 201
+_continue_loop4 : 284
+_continue_loop5 : 305
+_continue_loop6 : 333
+_continue_toString : 458
+_count_number_pos : 398
+_count_string_length : 373
+_end_func_____built_in_println : 245
+_end_func_____built_in_string_equal : 103
+_end_func_____built_in_string_greater : 161
+_end_func_____built_in_string_greater_equal : 232
+_end_func_____built_in_string_inequal : 144
+_end_func_____built_in_string_less : 62
+_end_func_____built_in_string_less_equal : 215
+_end_func_main : 338
+_end_if_0 : 30
+_end_if_1 : 50
+_end_if_2 : 79
+_end_if_3 : 97
+_end_if_4 : 120
+_end_if_5 : 138
+_end_if_6 : 181
+_end_if_7 : 201
+_end_loop_0 : 54
+_end_loop_1 : 101
+_end_loop_2 : 142
+_end_loop_3 : 205
+_end_loop_4 : 289
+_end_loop_5 : 310
+_end_loop_6 : 338
+_exit_count_string_length : 378
+_exit_string_copy : 348
+_finish_parse_int : 412
+_func_____built_in_getString : 380
+_func_____built_in_parseInt : 396
+_func_____built_in_println : 236
+_func_____built_in_string_concatenate : 413
+_func_____built_in_string_equal : 66
+_func_____built_in_string_greater : 148
+_func_____built_in_string_greater_equal : 219
+_func_____built_in_string_inequal : 107
+_func_____built_in_string_less : 14
+_func_____built_in_string_less_equal : 165
+_func_____built_in_substring : 350
+_func_____built_in_toString : 436
+_func_main : 249
+_not_yet : 447
+_parsing_int : 404
+_set_zero : 468
+_skip_place_neg : 467
+_skip_reserve_neg : 452
+_skip_set_less_than_zero : 438
+_static_0 : 4
+_static_1 : 16
+_static_2 : 12
+_string_copy : 342
+_yet : 450
+bge : 437
+main : 2
+

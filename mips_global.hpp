@@ -7,7 +7,7 @@ struct instructionTemp{
     char Rdest, Rsrc, argCount;
     int16_t Src;
     char srcType = 0; // 0 for immediate number, 1 for register
-    int32_t addressedLabel = -1; //label is translated to address(line number)
+    int32_t addressedLabel = -1; //label is translated to address(inner line number)
     int32_t offset = 0;
 };
 
@@ -68,7 +68,6 @@ public:
         instructionMapper["negu"] = NEGU;
         instructionMapper["rem"] = REM;
         instructionMapper["remu"] = REMU;
-        instructionMapper["li"] = LI;
         instructionMapper["seq"] = SEQ;
         instructionMapper["sge"] = SGE;
         instructionMapper["sle"] = SLE;
@@ -84,6 +83,7 @@ public:
         instructionMapper["beqz"] = BEQZ;
         instructionMapper["bnez"] = BNEZ;
         instructionMapper["blez"] = BLEZ;
+        instructionMapper["bgez"] = BGEZ;
         instructionMapper["bgtz"] = BGTZ;
         instructionMapper["bltz"] = BLTZ;
         instructionMapper["j"] = J;
@@ -93,6 +93,11 @@ public:
         instructionMapper["sb"] = SB;
         instructionMapper["sh"] = SH;
         instructionMapper["sw"] = SW;
+        instructionMapper["li"] = LI;
+        instructionMapper["lw"] = LW;
+        instructionMapper["lb"] = LB;
+        instructionMapper["lh"] = LH;
+        instructionMapper["la"] = LA;
         instructionMapper["move"] = MOVE;
         instructionMapper["mfhi"] = MFHI;
         instructionMapper["mflo"] = MFLO;
