@@ -4,6 +4,7 @@
 #include "mips_global.hpp"
 class MIPSRegister{
 friend class byteOperator;
+friend class MIPSPipeline;
 private:
     BYTE **data;
 public:
