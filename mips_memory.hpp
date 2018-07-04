@@ -5,6 +5,7 @@
 class MIPSMemory{
 friend class byteOperator;
 friend class MIPSTextParser;
+friend class MIPSPipeline;
 private:
     BYTE *data;
     OFFSETTYPE staticPosition = 0;

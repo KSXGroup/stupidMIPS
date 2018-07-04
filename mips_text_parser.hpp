@@ -153,8 +153,6 @@ public:
                                 if(ifMinus){
                                     argtmp32 = -argtmp32;
                                     ifMinus = 0;
-                                }    inline int32_t getWord(const int32_t &registerId){
-                                    return byteOperator::getWord(data[registerId], 0);
                                 }
                                 arg32.push_back(argtmp32);
                             }
@@ -259,6 +257,19 @@ public:
                                         case '\"':
                                             argTmpLine += '\"';
                                             linePos++;
+                                            break;
+                                        case '0':
+                                            argTmpLine += '\0';
+                                            linePos++;
+                                            break;
+                                        case 't':
+                                            argTmpLine += '\t';
+                                            linePos++;
+                                            break;
+                                        case '\'':
+                                            argTmpLine += '\'';
+                                            linePos++;
+                                            break;
                                         default:
                                             linePos++;
                                             break;
@@ -668,6 +679,7 @@ public:
                 for(auto i = labelToAddress.begin(); i != labelToAddress.end(); ++i) std::cerr << i->first << " : "  << i -> second << "\n";
 #endif
         mem.dynamicPosition = mem.staticPosition;
+        while(mem.dynamicPosition % 4 != 0) ++mem.dynamicPosition;
         mainPos = labelToAddress["main"];
 #ifdef TEXT_DEBUG
         for(int i = 0; i < inst.size(); ++i){

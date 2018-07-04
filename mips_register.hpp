@@ -41,7 +41,7 @@ public:
         return byteOperator::getHalf(data[registerId], 0);
     }
 
-    inline int8_t getWord(const int32_t &registerId){
+    inline int8_t getByte(const int32_t &registerId){
         return byteOperator::getByte(data[registerId], 0);
     }
 };

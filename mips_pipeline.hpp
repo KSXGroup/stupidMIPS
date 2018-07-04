@@ -25,23 +25,26 @@ private:
         uint32_t NPC = 0;
         int32_t dataRs = 0;
         int32_t dataRt = 0;
-        int32_t sysA1 = 0;
     }IDEX;
 
     struct{
         MIPSInstruction *ins;
+        uint32_t NPC = 0;
         int64_t aluOutput = 0;
-        int32_t lmd = 0;
         uint8_t cond = 0;
         int32_t dataRs = 0;
         int32_t dataRt = 0;
-        int32_t sysA1 = 0;
     }EXMEM;
 
     struct{
         MIPSInstruction *ins;
+        uint32_t NPC = 0;
         int64_t aluOutput = 0;
         int32_t lmd = 0;
+        int32_t dataRs = 0;
+        int32_t dataRt = 0;
+        uint32_t sysA1 = 0;
+        uint32_t sysV0 = 0;
     }MEMWB;
 
 
@@ -64,7 +67,7 @@ public:
 
     void preProcess(){
         parser->MIPSTextPreProcess(*mem);
-        reg->setWord((uint32_t)parser->mainPos, parser->mapper.registerMapper["$pc"]);
+        reg->setWord((uint32_t)parser->mainPos, 34);
         reg->setWord((uint32_t)(4 * 1024 * 1024 - 1), parser->mapper.registerMapper["$sp"]);
         reg->setWord((uint32_t)(0), parser->mapper.registerMapper["$fp"]);
     }
@@ -73,10 +76,24 @@ private:
 
     void IF(){
         //TODO CHECK BRANCH
+        uint32_t tmp = 0;
         uint32_t InstPos = (uint32_t)(reg->getWord(34));
         IFID.ins = parser->inst[InstPos];
-        reg->setWord(InstPos + 1, 34);
         IFID.NPC = InstPos + 1;
+        switch (EXMEM.ins->name){
+            case B: case BEQ: case BNE: case BGE: case BLE: case BGT: case BLT: case BEQZ: case BNEZ: case BLEZ: case BGEZ: case BGTZ:
+            case BLTZ: case J: case JR: case JAL: case JALR:
+                if(EXMEM.cond == 1){
+                    reg->setWord((uint32_t)EXMEM.aluOutput, 34);
+                }
+                else{
+                    reg->setWord(InstPos + 1,34);
+                }
+                break;
+            default:
+                reg->setWord(InstPos + 1,34);
+                break;
+        }
     }
 
     void ID(){
@@ -85,18 +102,18 @@ private:
         if(IFID.ins->srcType == 1) IDEX.dataRt = reg->getWord(IFID.ins->Src);
         IDEX.NPC = IFID.NPC;
         if(IFID.ins == SYSCALL){
-            IDEX.dataRs = reg->getWord(parser->mapper.registerMapper["$v0"]);
-            IDEX.dataRt = reg->getWord(parser->mapper.registerMapper["$a0"]);
-            IDEX.sysA1 = reg->getWord(parser->mapper.registerMapper["$a1"]); //FOR SYSCALL PARAMATER IN $a1
+            IDEX.dataRs = reg->getWord(2);
+            IDEX.dataRt = reg->getWord(4);
         }
     }
 
     void EX(){
-        string ipt = "";
+        int32_t tmpLo, tmpHi;
+        uint32_t tmpA, tmpB, quotient, remainder;
         EXMEM.ins = IDEX.ins;
         EXMEM.dataRs = IDEX.dataRs;
         EXMEM.dataRt = IDEX.dataRt;
-        EXMEM.sysA1 = IDEX.sysA1;
+        EXMEM.NPC = IDEX.NPC;
         INSTRUCTION currentInst = IFID.ins->name;
         switch(currentInst){
             case ADD:
@@ -121,12 +138,12 @@ private:
             case DIV:
                 if(IDEX.ins->argCount == 2){
                     if(IDEX.ins->srcType == 0){
-                        int32_t tmpLo = IDEX.dataRs / IDEX.ins->Src;
-                        int32_t tmpHi = IDEX.dataRs % IDEX.ins->Src;
+                        tmpLo = IDEX.dataRs / IDEX.ins->Src;
+                        tmpHi = IDEX.dataRs % IDEX.ins->Src;
                     }
                     else{
-                        int32_t tmpLo = IDEX.dataRs / IDEX.dataRt;
-                        int32_t tmpHi = IDEX.dataRs % IDEX.dataRt;
+                        tmpLo = IDEX.dataRs / IDEX.dataRt;
+                        tmpHi = IDEX.dataRs % IDEX.dataRt;
                     }
                     EXMEM.aluOutput = ((((int64_t)tmpHi) << 32) | (tmpLow));
                 }
@@ -141,42 +158,42 @@ private:
                 break;
             case MULU:
                 if(IDEX.ins->srcType == 0){
-                    uint32_t tmpA = IDEX.dataRs;
-                    uint32_t tmpB = IDEX.ins->Src;
+                    tmpA = IDEX.dataRs;
+                    tmpB = IDEX.ins->Src;
                     EXMEM.aluOutput = (uint32_t)(tmpA * tmpB);
                 }
                 else{
-                    uint32_t tmpA = IDEX.dataRs;
-                    uint32_t tmpB = IDEX.dataRt;
+                    tmpA = IDEX.dataRs;
+                    tmpB = IDEX.dataRt;
                     EXMEM.aluOutput = (uint32_t)(tmpA * tmpB);
                 }
                 break;
             case DIVU:
                 if(IDEX.ins->argCount == 2){
                     if(IDEX.ins->srcType == 0){
-                        uint32_t tmpA = IDEX.dataRs;
-                        uint32_t tmpB = IDEX.ins->Src;
-                        uint32_t quotient = tmpA / tmpB;
-                        uint32_t remainder = tmpA % tmpB;
+                        tmpA = IDEX.dataRs;
+                        tmpB = IDEX.ins->Src;
+                        quotient = tmpA / tmpB;
+                        remainder = tmpA % tmpB;
                         EXMEM.aluOutput =  ((((uint64_t)remainder) << 32) | (quotient));
                     }
                     else{
-                        uint32_t tmpA = IDEX.dataRs;
-                        uint32_t tmpB = IDEX.dataRt;
-                        uint32_t quotient = tmpA / tmpB;
-                        uint32_t remainder = tmpA % tmpB;
+                        tmpA = IDEX.dataRs;
+                        tmpB = IDEX.dataRt;
+                        quotient = tmpA / tmpB;
+                        remainder = tmpA % tmpB;
                         EXMEM.aluOutput =  ((((uint64_t)remainder) << 32) | (quotient));
                     }
                 }
                 else{
                     if(IDEX.ins->srcType == 0){
-                        uint32_t tmpA = IDEX.dataRs;
-                        uint32_t tmpB = IDEX.ins->Src;
+                        tmpA = IDEX.dataRs;
+                        tmpB = IDEX.ins->Src;
                         EXMEM.aluOutput = (uint32_t)(tmpA / tmpB);
                     }
                     else{
-                        uint32_t tmpA = IDEX.dataRs;
-                        uint32_t tmpB = IDEX.dataRt;
+                        tmpA = IDEX.dataRs;
+                        tmpB = IDEX.dataRt;
                         EXMEM.aluOutput = (uint32_t)(tmpA / tmpB);
                     }
                 }
@@ -232,57 +249,74 @@ private:
             case BEQ:
                 if(IDEX.ins->srcType == 0) EXMEM.cond = (IDEX.dataRs == IDEX.ins->Src);
                 else EXMEM.cond = (IDEX.dataRs == IDEX.dataRt);
+                EXMEM.aluOutput = IDEX.ins->addressedLabel;
                 break;
             case BNE:
                 if(IDEX.ins->srcType == 0) EXMEM.cond = (IDEX.dataRs != IDEX.ins->Src);
                 else EXMEM.cond = (IDEX.dataRs != IDEX.dataRt);
+                EXMEM.aluOutput = IDEX.ins->addressedLabel;
                 break;
             case BGE:
                 if(IDEX.ins->srcType == 0) EXMEM.cond = (IDEX.dataRs >= IDEX.ins->Src);
                 else EXMEM.cond = (IDEX.dataRs >= IDEX.dataRt);
+                EXMEM.aluOutput = IDEX.ins->addressedLabel;
                 break;
             case BLE:
                 if(IDEX.ins->srcType == 0) EXMEM.cond = (IDEX.dataRs <= IDEX.ins->Src);
                 else EXMEM.cond = (IDEX.dataRs <= IDEX.dataRt);
+                EXMEM.aluOutput = IDEX.ins->addressedLabel;
                 break;
             case BGT:
                 if(IDEX.ins->srcType == 0) EXMEM.cond = (IDEX.dataRs > IDEX.ins->Src);
                 else EXMEM.cond = (IDEX.dataRs > IDEX.dataRt);
+                EXMEM.aluOutput = IDEX.ins->addressedLabel;
                 break;
 // 0 for immediate number, 1 for register
             case BLT:
                 if(IDEX.ins->srcType == 0) EXMEM.cond = (IDEX.dataRs < IDEX.ins->Src);
                 else EXMEM.cond = (IDEX.dataRs < IDEX.dataRt);
+                EXMEM.aluOutput = IDEX.ins->addressedLabel;
                 break;
             case BEQZ:
                 EXMEM.cond = (IDEX.dataRs == 0);
+                EXMEM.aluOutput = IDEX.ins->addressedLabel;
                 break;
             case BNEZ:
                 EXMEM.cond = (IDEX.dataRs != 0);
+                EXMEM.aluOutput = IDEX.ins->addressedLabel;
                 break;
             case BLEZ:
                 EXMEM.cond = (IDEX.dataRs <= 0);
+                EXMEM.aluOutput = IDEX.ins->addressedLabel;
                 break;
             case BGEZ:
                 EXMEM.cond = (IDEX.dataRs >= 0);
+                EXMEM.aluOutput = IDEX.ins->addressedLabel;
                 break;
             case BGTZ:
                 EXMEM.cond = (IDEX.dataRs > 0);
+                EXMEM.aluOutput = IDEX.ins->addressedLabel;
                 break;
             case BLTZ:
                 EXMEM.cond = (IDEX.dataRs < 0);
+                EXMEM.aluOutput = IDEX.ins->addressedLabel;
                 break;
             case J:
             case B:
             case JAL:
-            case JALR:
                 EXMEM.aluOutput = IDEX.ins->addressedLabel;
+                EXMEM.cond = 1;
                 if(EXMEM.aluOutput == -1){
 #ifdef PIPELINE_DEBUG
                     cerr << "\n\nB FUCK!\n\n";
 #endif
                     exit(0);
                 }
+                break;
+            case JR:
+            case JALR:
+                EXMEM.aluOutput = IDEX.ins->addressedLabel;
+                EXMEM.cond = 1;
                 break;
             case LA:
             case LB:
@@ -315,17 +349,10 @@ private:
                         rtv = IDEX.dataRt; // rt = $a0
                         break;
                     default:
-#ifdef PIPELINE_DEBUG
-                        cerr << "\n\nSYSCALL ERROR\n\n";
-                        exit(0);
-#endif
+                        break;
                 }
 
-                default:
-#ifdef PIPELINE_DEBUG
-                    cerr << "\n\nRUN TIME ERROR!\n\n";
-#endif
-                    exit(0);
+             default:
                     break;
             }
     }
@@ -335,6 +362,9 @@ private:
         uint32_t pos = 0;
         MEMWB.ins = EXMEM.ins;
         MEMWB.aluOutput = EXMEM.aluOutput;
+        MEMWB.dataRs = EXMEM.dataRs;
+        MEMWB.dataRt = EXMEM.dataRt;
+        MEMWB.NPC = EXMEM.NPC;
         INSTRUCTION currentInst = EXMEM.ins->name;
         switch (currentInst){
             case LB:
@@ -358,15 +388,100 @@ private:
             case SYSCALL:
                 switch(EXMEM.dataRs){
                     case 4:
-                        ipt = "";
-
+                        str = "";
+                        pos = EXMEM.aluOutput;
+                        while(mem->getByte(pos) != '\0'){
+                            str += (char)(mem->getByte(pos));
+                            ++pos;
+                        }
+                        cout << str;
+                        break;
                     case 8:
+                        cin >> str;
+                        pos = EXMEM.aluOutput;
+                        for(int32_t i = 0; i < str.length(); ++i) mem->setByte(pos++, (int8_t)str[i]);
+                        mem->setByte(pos, (int8_t)'\0');
+                        MEMWB.sysA1 = str.length() + 1;
+                        break;
                     case 9:
+                        while(mem->dynamicPosition % 4 != 0) ++mem->dynamicPosition;
+                        MEMWB.sysV0 = mem->dynamicPosition;
+                        mem->dynamicPosition += EXMEM.dataRt;
+                        break;
+                    default:
+                        break;
                 }
         }
     }
 
-    void WB(){}
+    void WB(){
+        uint32_t tmpHi = 0, tmpLo = 0;
+        INSTRUCTION currentInst = MEMWB.ins->name;
+        switch(currentInst){
+            case ADD:
+            case ADDU:
+            case ADDIU:
+            case SUB:
+            case SUBU:
+            case XOR:
+            case XORU:
+            case NEGU:
+            case NEG:
+            case REM:
+            case REMU:
+            case SEQ:
+            case SGE:
+            case SGT:
+            case SLE:
+            case SNE:
+                reg->setWord(MEMWB.aluOutput,MEMWB.ins->Rdest);
+                break;
+            case MUL:
+            case MULU:
+            case DIV:
+            case DIVU:
+                if(MEMWB.ins->argCount == 2){
+                    tmpLo = MEMWB.aluOutput & ((int64_t)(0xffff));
+                    tmpHi = (MEMWB.aluOutput >> 32);
+                    reg->setWord(tmpHi, 33);
+                    reg->setWord(tmpLo, 32);
+                }
+                else{
+                    reg->setWord(MEMWB.aluOutput, MEMWB.ins->Rdest);
+                }
+                break;
+            case LA:
+                reg->setWord(MEMWB.aluOutput, MEMWB.ins->Rdest);
+                break;
+            case LB:
+                reg->setByte(MEMWB.lmd, MEMWB.ins->Rdest);
+                break;
+            case LH:
+                reg->setHalf(MEMWB.lmd, MEMWB.ins->Rdest);
+                break;
+            case LW:
+                reg->setWord(MEMWB.lmd, MEMWB.ins->Rdest);
+                break;
+            case MOVE:
+                reg->setWord(MEMWB.dataRs, MEMWB.ins->Rdest);
+                break;
+                //HI 33 LO 32
+            case MFHI:
+                reg->setWord(reg->getWord(33), MEMWB.ins->Rdest);
+                break;
+            case MFLO:
+                reg->setWord(reg->getWord(32), MEMWB.ins->Rdest);
+                break;
+            case JAL:
+            case JALR:
+                reg->setWord(MEMWB.NPC, 31);
+                break;
+            case SYSCALL:
+
+            default:
+                break;
+        }
+    }
 
 };
 #endif
