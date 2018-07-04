@@ -4,6 +4,7 @@
 #include "mips_simulator.hpp"
 #include "mips_pipeline.hpp"
 int main(){
-        MIPSPipeline p("MipsTest/testsuit-1/class_test-mahaojun.s");
+        MIPSPipeline p("MipsTest/testsuit-1/array_test1-mahaojun.s");
         p.preProcess();
+        //p.runPipeline();
 }

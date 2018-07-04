@@ -5,45 +5,48 @@
 #include "mips_text_parser.hpp"
 #include "mips_register.hpp"
 #include "mips_memory.hpp"
-
+using std::cin;
+using std::cout;
+using std::cerr;
 class MIPSPipeline{
 private:
     MIPSTextParser *parser = nullptr;
     MIPSRegister *reg = nullptr;
     MIPSMemory *mem = nullptr;
-    BYTE exit = 0;
     int32_t rtv = 0;
+    BYTE STATUS_WB = 0, STATUS_MA = 0, STATUS_EX = 0, STATUS_ID = 0,STATUS_IF = 0;
     //PIPELINE REGISTERS
     //refer to 'Computer Architecture (A quantitive approach)'
     struct{
-        MIPSInstruction *ins;
+        MIPSInstruction *ins = nullptr;
         uint32_t NPC = 0;
     }IFID;
 
     struct{
-        MIPSInstruction *ins;
+        MIPSInstruction *ins = nullptr;
         uint32_t NPC = 0;
         int32_t dataRs = 0;
         int32_t dataRt = 0;
+        int32_t sysA1 = 0;
     }IDEX;
 
     struct{
-        MIPSInstruction *ins;
+        MIPSInstruction *ins = nullptr;
         uint32_t NPC = 0;
         int64_t aluOutput = 0;
         uint8_t cond = 0;
         int32_t dataRs = 0;
         int32_t dataRt = 0;
+        int32_t sysA1 = 0;
     }EXMEM;
 
     struct{
-        MIPSInstruction *ins;
+        MIPSInstruction *ins = nullptr;
         uint32_t NPC = 0;
         int64_t aluOutput = 0;
         int32_t lmd = 0;
         int32_t dataRs = 0;
         int32_t dataRt = 0;
-        uint32_t sysA1 = 0;
         uint32_t sysV0 = 0;
     }MEMWB;
 
@@ -72,48 +75,82 @@ public:
         reg->setWord((uint32_t)(0), parser->mapper.registerMapper["$fp"]);
     }
 
+    void runPipeline(){
+        while(1){
+            if(STATUS_IF == 1 && STATUS_WB == 0) WB();
+            if(STATUS_IF == 1 && STATUS_MA == 0) MA();
+            if(STATUS_IF == 1 && STATUS_EX == 0) EX();
+            if(STATUS_IF == 1 && STATUS_EX == 0) ID();
+            if(STATUS_IF == 0) IF();
+            if(STATUS_IF && STATUS_EX && STATUS_MA && STATUS_WB && STATUS_ID){
+                STATUS_IF = STATUS_ID = STATUS_EX = STATUS_MA = STATUS_WB = 0;
+            }
+        }
+    }
 private:
 
     void IF(){
         //TODO CHECK BRANCH
-        uint32_t tmp = 0;
         uint32_t InstPos = (uint32_t)(reg->getWord(34));
         IFID.ins = parser->inst[InstPos];
         IFID.NPC = InstPos + 1;
-        switch (EXMEM.ins->name){
-            case B: case BEQ: case BNE: case BGE: case BLE: case BGT: case BLT: case BEQZ: case BNEZ: case BLEZ: case BGEZ: case BGTZ:
-            case BLTZ: case J: case JR: case JAL: case JALR:
-                if(EXMEM.cond == 1){
-                    reg->setWord((uint32_t)EXMEM.aluOutput, 34);
-                }
-                else{
+        if(EXMEM.ins != nullptr){
+            switch (EXMEM.ins->name){
+                case B: case BEQ: case BNE: case BGE: case BLE: case BGT: case BLT: case BEQZ: case BNEZ: case BLEZ: case BGEZ: case BGTZ: case BLTZ: case J: case JR: case JAL: case JALR:
+                    if(EXMEM.cond == 1){
+                        reg->setWord((uint32_t)EXMEM.aluOutput, 34);
+                    }
+                    else{
+                        reg->setWord(InstPos + 1,34);
+                    }
+                    break;
+                default:
                     reg->setWord(InstPos + 1,34);
-                }
-                break;
-            default:
-                reg->setWord(InstPos + 1,34);
-                break;
+                    break;
+            }
         }
+        else{
+            reg->setWord(InstPos + 1,34);
+        }
+#ifdef PIPELINE_DEBUG
+        cerr << "IF\n";
+#ifdef PIPELINE_PAUSE
+        getchar();
+#endif
+#endif
+        STATUS_IF = 1;
     }
 
     void ID(){
+        if(IFID.ins == nullptr) return;
         IDEX.ins = IFID.ins;
         IDEX.dataRs = reg->getWord(IFID.ins->Rsrc);
         if(IFID.ins->srcType == 1) IDEX.dataRt = reg->getWord(IFID.ins->Src);
         IDEX.NPC = IFID.NPC;
-        if(IFID.ins == SYSCALL){
+        if(IFID.ins->name == SYSCALL){
             IDEX.dataRs = reg->getWord(2);
             IDEX.dataRt = reg->getWord(4);
+            if(IDEX.dataRs == 8) IDEX.sysA1 = reg->getWord(5);
         }
+        STATUS_ID = 1;
+#ifdef PIPELINE_DEBUG
+        cerr << "ID\n";
+#ifdef PIPELINE_PAUSE
+        getchar();
+#endif
+#endif
     }
 
     void EX(){
+        if(EXMEM.ins == nullptr) return;
         int32_t tmpLo, tmpHi;
         uint32_t tmpA, tmpB, quotient, remainder;
         EXMEM.ins = IDEX.ins;
         EXMEM.dataRs = IDEX.dataRs;
         EXMEM.dataRt = IDEX.dataRt;
         EXMEM.NPC = IDEX.NPC;
+        EXMEM.sysA1 = IDEX.sysA1;
+        EXMEM.cond = 0;
         INSTRUCTION currentInst = IFID.ins->name;
         switch(currentInst){
             case ADD:
@@ -145,7 +182,7 @@ private:
                         tmpLo = IDEX.dataRs / IDEX.dataRt;
                         tmpHi = IDEX.dataRs % IDEX.dataRt;
                     }
-                    EXMEM.aluOutput = ((((int64_t)tmpHi) << 32) | (tmpLow));
+                    EXMEM.aluOutput = ((((int64_t)tmpHi) << 32) | (tmpLo));
                 }
                 else{
                     if(IFID.ins->srcType == 0){
@@ -271,7 +308,6 @@ private:
                 else EXMEM.cond = (IDEX.dataRs > IDEX.dataRt);
                 EXMEM.aluOutput = IDEX.ins->addressedLabel;
                 break;
-// 0 for immediate number, 1 for register
             case BLT:
                 if(IDEX.ins->srcType == 0) EXMEM.cond = (IDEX.dataRs < IDEX.ins->Src);
                 else EXMEM.cond = (IDEX.dataRs < IDEX.dataRt);
@@ -308,7 +344,10 @@ private:
                 EXMEM.cond = 1;
                 if(EXMEM.aluOutput == -1){
 #ifdef PIPELINE_DEBUG
-                    cerr << "\n\nB FUCK!\n\n";
+                    cerr << "\n\nB FUCK! NO LABEL!\n\n";
+#ifdef PIPELINE_PAUSE
+        getchar();
+#endif
 #endif
                     exit(0);
                 }
@@ -342,11 +381,13 @@ private:
                         cin >> EXMEM.aluOutput;
                         break;
                     case 10:
-                        exit = 1;
+                        //exit = 1;
+                        exit(0);
                         break;
                     case 17:
-                        exit = 1;
-                        rtv = IDEX.dataRt; // rt = $a0
+                        exit(IDEX.dataRt);
+                        //exit = 1;
+                        //rtv = IDEX.dataRt; // rt = $a0
                         break;
                     default:
                         break;
@@ -355,9 +396,17 @@ private:
              default:
                     break;
             }
+#ifdef PIPELINE_DEBUG
+        cerr << "EX\n";
+#ifdef PIPELINE_PAUSE
+        getchar();
+#endif
+#endif
+        STATUS_EX = 1;
     }
 
     void MA(){
+        if(EXMEM.ins == nullptr) return;
         string str = "";
         uint32_t pos = 0;
         MEMWB.ins = EXMEM.ins;
@@ -368,7 +417,7 @@ private:
         INSTRUCTION currentInst = EXMEM.ins->name;
         switch (currentInst){
             case LB:
-                MEMWB.lmd =  mem->getBYTE(EXMEM.aluOutput);
+                MEMWB.lmd =  mem->getByte(EXMEM.aluOutput);
                 break;
             case LH:
                 MEMWB.lmd = mem->getHalf(EXMEM.aluOutput);
@@ -389,7 +438,7 @@ private:
                 switch(EXMEM.dataRs){
                     case 4:
                         str = "";
-                        pos = EXMEM.aluOutput;
+                        pos = EXMEM.dataRt;
                         while(mem->getByte(pos) != '\0'){
                             str += (char)(mem->getByte(pos));
                             ++pos;
@@ -398,10 +447,9 @@ private:
                         break;
                     case 8:
                         cin >> str;
-                        pos = EXMEM.aluOutput;
-                        for(int32_t i = 0; i < str.length(); ++i) mem->setByte(pos++, (int8_t)str[i]);
+                        pos = EXMEM.dataRt;
+                        for(int32_t i = 0; i <= EXMEM.sysA1 - 1 && i < str.length(); ++i) mem->setByte(pos++, (int8_t)str[i]);
                         mem->setByte(pos, (int8_t)'\0');
-                        MEMWB.sysA1 = str.length() + 1;
                         break;
                     case 9:
                         while(mem->dynamicPosition % 4 != 0) ++mem->dynamicPosition;
@@ -411,10 +459,19 @@ private:
                     default:
                         break;
                 }
+            default: break;
         }
+        STATUS_MA = 1;
+#ifdef PIPELINE_DEBUG
+        cerr << "MA\n";
+#ifdef PIPELINE_PAUSE
+        getchar();
+#endif
+#endif
     }
 
     void WB(){
+        if(MEMWB.ins == nullptr) return;
         uint32_t tmpHi = 0, tmpLo = 0;
         INSTRUCTION currentInst = MEMWB.ins->name;
         switch(currentInst){
@@ -477,10 +534,25 @@ private:
                 reg->setWord(MEMWB.NPC, 31);
                 break;
             case SYSCALL:
-
+                switch(MEMWB.dataRs){
+                    case 5:
+                        reg->setWord(MEMWB.aluOutput, 2);
+                        break;
+                    case 9:
+                        reg->setWord(MEMWB.sysV0, 2);
+                        break;
+                    default: break;
+                }
             default:
                 break;
         }
+#ifdef PIPELINE_DEBUG
+        cerr << "WB\n";
+#ifdef PIPELINE_PAUSE
+        getchar();
+#endif
+#endif
+        STATUS_WB = 1;
     }
 
 };
