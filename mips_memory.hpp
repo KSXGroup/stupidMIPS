@@ -10,7 +10,7 @@ private:
     BYTE *data;
     OFFSETTYPE staticPosition = 0;
     OFFSETTYPE dynamicPosition = 0;
-    OFFSETTYPE stackPosition = 4 * 1024 * 1024 - 1;
+    OFFSETTYPE stackPosition = 4 * 1024 * 1024;
 public:
 
     MIPSMemory(){
@@ -93,7 +93,7 @@ public:
     }
 
     inline void setWord(const OFFSETTYPE &pos, const int32_t &d){
-        byteOperator::setByte(data, pos, d);
+        byteOperator::setWord(data, pos, d);
     }
 
     inline void setHalf(const OFFSETTYPE &pos, const int16_t &d){
@@ -103,6 +103,7 @@ public:
     inline void setByte(const OFFSETTYPE &pos, const int8_t &d){
         byteOperator::setByte(data, pos, d);
     }
+
 };
 
 #endif

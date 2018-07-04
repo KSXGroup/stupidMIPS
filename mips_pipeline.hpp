@@ -71,8 +71,9 @@ public:
     void preProcess(){
         parser->MIPSTextPreProcess(*mem);
         reg->setWord((uint32_t)parser->mainPos, 34);
-        reg->setWord((uint32_t)(4 * 1024 * 1024 - 1), parser->mapper.registerMapper["$sp"]);
+        reg->setWord((uint32_t)(4 * 1024 * 1024), parser->mapper.registerMapper["$sp"]);
         reg->setWord((uint32_t)(0), parser->mapper.registerMapper["$fp"]);
+        reg->setWord(uint32_t(0), 0);
     }
 
     void runPipeline(){
@@ -91,29 +92,14 @@ private:
 
     void IF(){
         //TODO CHECK BRANCH
-        uint32_t InstPos = (uint32_t)(reg->getWord(34));
+        uint32_t InstPos = reg->getWord(34);
+        reg->setWord(InstPos + 1, 34);
         IFID.ins = parser->inst[InstPos];
         IFID.NPC = InstPos + 1;
-        if(EXMEM.ins != nullptr){
-            switch (EXMEM.ins->name){
-                case B: case BEQ: case BNE: case BGE: case BLE: case BGT: case BLT: case BEQZ: case BNEZ: case BLEZ: case BGEZ: case BGTZ: case BLTZ: case J: case JR: case JAL: case JALR:
-                    if(EXMEM.cond == 1){
-                        reg->setWord((uint32_t)EXMEM.aluOutput, 34);
-                    }
-                    else{
-                        reg->setWord(InstPos + 1,34);
-                    }
-                    break;
-                default:
-                    reg->setWord(InstPos + 1,34);
-                    break;
-            }
-        }
-        else{
-            reg->setWord(InstPos + 1,34);
-        }
+
 #ifdef PIPELINE_DEBUG
         cerr << parser->inst[InstPos]->dispName<< " IF\n";
+        reg->dispRegInt();
 #ifdef PIPELINE_PAUSE
         getchar();
 #endif
@@ -123,6 +109,9 @@ private:
 
     void ID(){
         if(IFID.ins == nullptr) return;
+        if(IFID.ins->name == SW){
+            cerr << "STOP!";
+        }
         IDEX.ins = IFID.ins;
         IDEX.dataRs = reg->getWord(IFID.ins->Rsrc);
         if(IFID.ins->srcType == 1) IDEX.dataRt = reg->getWord(IFID.ins->Src);
@@ -135,6 +124,7 @@ private:
         STATUS_ID = 1;
 #ifdef PIPELINE_DEBUG
         cerr << IFID.ins->dispName <<" ID\n";
+        reg->dispRegInt();
 #ifdef PIPELINE_PAUSE
         getchar();
 #endif
@@ -354,7 +344,7 @@ private:
                 break;
             case JR:
             case JALR:
-                EXMEM.aluOutput = IDEX.ins->addressedLabel;
+                EXMEM.aluOutput = IDEX.dataRs;
                 EXMEM.cond = 1;
                 break;
             case LA:
@@ -365,7 +355,7 @@ private:
             case SH:
             case SW:
                 if(IDEX.ins->addressedLabel == -1){
-                    EXMEM.aluOutput = IDEX.dataRs + IDEX.ins->offset;
+                    EXMEM.aluOutput = IDEX.dataRt + IDEX.ins->offset;
                 }
                 else{
                     EXMEM.aluOutput = IDEX.ins->addressedLabel;
@@ -393,11 +383,12 @@ private:
                         break;
                 }
 
-             default:
-                    break;
+             default: break;
             }
+        if(EXMEM.cond == 1) reg->setWord((uint32_t)EXMEM.aluOutput, 34);
 #ifdef PIPELINE_DEBUG
-        cerr <<IDEX.ins->dispName<< "EX\n";
+        cerr <<IDEX.ins->dispName<< " EX\n";
+        reg->dispRegInt();
 #ifdef PIPELINE_PAUSE
         getchar();
 #endif
@@ -463,7 +454,7 @@ private:
         }
         STATUS_MA = 1;
 #ifdef PIPELINE_DEBUG
-       cerr <<IFID.ins->dispName<<"MA\n";
+       cerr <<IFID.ins->dispName<<" MA\n";
 #ifdef PIPELINE_PAUSE
         getchar();
 #endif
@@ -522,7 +513,6 @@ private:
             case MOVE:
                 reg->setWord(MEMWB.dataRs, MEMWB.ins->Rdest);
                 break;
-                //HI 33 LO 32
             case MFHI:
                 reg->setWord(reg->getWord(33), MEMWB.ins->Rdest);
                 break;
@@ -532,6 +522,9 @@ private:
             case JAL:
             case JALR:
                 reg->setWord(MEMWB.NPC, 31);
+                break;
+            case LI:
+                reg->setWord(MEMWB.ins->Src, MEMWB.ins->Rdest);
                 break;
             case SYSCALL:
                 switch(MEMWB.dataRs){
@@ -547,8 +540,12 @@ private:
                 break;
         }
 #ifdef PIPELINE_DEBUG
-       cerr <<IFID.ins->dispName<<"WB\n";
+       cerr <<IFID.ins->dispName<<" WB\n";
+        reg->dispRegInt();
 #ifdef PIPELINE_PAUSE
+        getchar();
+#endif
+#ifdef LINE_PAUSE
         getchar();
 #endif
 #endif

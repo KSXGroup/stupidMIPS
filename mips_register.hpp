@@ -44,6 +44,16 @@ public:
     inline int8_t getByte(const int32_t &registerId){
         return byteOperator::getByte(data[registerId], 0);
     }
+
+#ifdef PIPELINE_DEBUG
+    void dispRegInt(){
+        std::cerr << "\n";
+        for(int i = 0; i < 35; ++i){
+            std::cerr <<"$"<< i << ":" << getWord(i) << "\t";
+        }
+        std::cerr << "\n";
+    }
+#endif
 };
 
 #endif

@@ -435,7 +435,7 @@ public:
                             linePos = stringSkipForNumberAndRegister(tmpLine, linePos);
                             linePos = getRegisterFromString(tmpLine, linePos, Rsrc1);
                             tmpPtr->Rdest = mapper.registerMapper[Rdest];
-                            tmpPtr->Rsrc = mapper.registerMapper[Rdest];
+                            tmpPtr->Rsrc = mapper.registerMapper[Rsrc1];
 #ifdef TEXT_DEBUG
                             tmpPtr->dispName = tmpToken;
                             cerr << "[" << tmpToken << "]:" ;
@@ -592,8 +592,9 @@ public:
                             tmpPtr->name = currentInst;
                             tmpPtr->argCount = 2;
                             linePos = stringSkipForNumberAndRegister(tmpLine, linePos);
-                            linePos = getRegisterFromString(tmpLine, linePos, Rdest);
-                            tmpPtr->Rdest = mapper.registerMapper[Rdest];
+                            linePos = getRegisterFromString(tmpLine, linePos, Rsrc1);
+                            if(currentInst == SB || currentInst == SH || currentInst == SW) tmpPtr->Rsrc = mapper.registerMapper[Rsrc1];
+                            else tmpPtr->Rdest = mapper.registerMapper[Rsrc1];
                             while(linePos < lineLength && tmpLine[linePos] != ',') ++linePos;
                             ++linePos;
                             while(linePos < lineLength && tmpLine[linePos] == ' ') ++linePos;
@@ -603,9 +604,10 @@ public:
                                 linePos = getNumberFromString(tmpLine, linePos, num);
                                 tmpPtr->offset = num;
                                 linePos = stringSkipForNumberAndRegister(tmpLine, linePos);
-                                linePos = getRegisterFromString(tmpLine, linePos, Rsrc1);
+                                linePos = getRegisterFromString(tmpLine, linePos, Rdest);
                                 tmpPtr->argCount = 3;
-                                tmpPtr->Rsrc = mapper.registerMapper[Rsrc1];
+                                tmpPtr->srcType = 1;
+                                tmpPtr->Src = mapper.registerMapper[Rdest];
                             }
                             else{
                                 linePos = getLabelFromString(tmpLine, linePos, label);
