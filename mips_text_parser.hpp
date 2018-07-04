@@ -7,7 +7,7 @@ using std::string;
 using std::cerr;
 
 class MIPSTextParser{
-friend class MIPSInstructionProcessor;
+friend class MIPSPipeline;
 private:
     char *sourceCode = nullptr;
     uint32_t codeLength = 0;

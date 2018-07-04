@@ -1,7 +1,7 @@
 #ifndef _MIPS_DEFINE_H_
 #define _MIPS_DEFINE_H_
 //#define STATIC_DATA_DEBUG
-#define TEXT_DEBUG
+//#define TEXT_DEBUG
 //#define PARSED_PROGRAM_DEBUG
 #include <iostream>
 #include <fstream>

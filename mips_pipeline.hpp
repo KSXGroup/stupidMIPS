@@ -15,6 +15,7 @@ public:
 
     void processSourceCode(MIPSMemory &mem){
         parser->MIPSTextPreProcess(mem);
+        std::cerr << parser->codeLength << "\n";
     }
 
 };
