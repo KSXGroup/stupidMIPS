@@ -135,7 +135,6 @@ public:
                     EXMEM.aluOutput = (uint32_t)(tmpA * tmpB);
                 }
                 break;
-// 0 for immediate number, 1 for register
             case DIVU:
                 if(IDEX.ins->argCount == 2){
                     if(IDEX.ins->srcType == 0){
@@ -189,6 +188,75 @@ public:
                 else{
                     EXMEM.aluOutput = (IDEX.dataRs % IDEX.dataRt);
                 }
+                break;
+            case SEQ:
+                if(IDEX.ins->srcType == 0) EXMEM.aluOutput = (IDEX.dataRs == IDEX.ins->Src);
+                else EXMEM.aluOutput = (IDEX.dataRs == IDEX.dataRt);
+                break;
+            case SGE:
+                if(IDEX.ins->srcType == 0) EXMEM.aluOutput = (IDEX.dataRs >= IDEX.ins->Src);
+                else EXMEM.aluOutput = (IDEX.dataRs >= IDEX.dataRt);
+                break;
+            case SGT:
+                if(IDEX.ins->srcType == 0) EXMEM.aluOutput = (IDEX.dataRs > IDEX.ins->Src);
+                else EXMEM.aluOutput = (IDEX.dataRs > IDEX.dataRt);
+                break;
+            case SLE:
+                if(IDEX.ins->srcType == 0) EXMEM.aluOutput = (IDEX.dataRs <= IDEX.ins->Src);
+                else EXMEM.aluOutput = (IDEX.dataRs <= IDEX.dataRt);
+                break;
+            case SLT:// 0 for immediate number, 1 for register
+                if(IDEX.ins->srcType == 0) EXMEM.aluOutput = (IDEX.dataRs < IDEX.ins->Src);
+                else EXMEM.aluOutput = (IDEX.dataRs < IDEX.dataRt);
+                break;
+            case SNE:
+                if(IDEX.ins->srcType == 0) EXMEM.aluOutput = (IDEX.dataRs != IDEX.ins->Src);
+                else EXMEM.aluOutput = (IDEX.dataRs != IDEX.dataRt);
+                break;
+            case BEQ:
+                if(IDEX.ins->srcType == 0) EXMEM.cond = (IDEX.dataRs == IDEX.ins->Src);
+                else EXMEM.cond = (IDEX.dataRs == IDEX.dataRt);
+                break;
+            case BNE:
+                if(IDEX.ins->srcType == 0) EXMEM.cond = (IDEX.dataRs != IDEX.ins->Src);
+                else EXMEM.cond = (IDEX.dataRs != IDEX.dataRt);
+                break;
+            case BGE:
+                if(IDEX.ins->srcType == 0) EXMEM.cond = (IDEX.dataRs >= IDEX.ins->Src);
+                else EXMEM.cond = (IDEX.dataRs >= IDEX.dataRt);
+                break;
+            case BLE:
+                if(IDEX.ins->srcType == 0) EXMEM.cond = (IDEX.dataRs <= IDEX.ins->Src);
+                else EXMEM.cond = (IDEX.dataRs <= IDEX.dataRt);
+                break;
+            case BGT:
+                if(IDEX.ins->srcType == 0) EXMEM.cond = (IDEX.dataRs > IDEX.ins->Src);
+                else EXMEM.cond = (IDEX.dataRs > IDEX.dataRt);
+                break;
+// 0 for immediate number, 1 for register
+            case BLT:
+                if(IDEX.ins->srcType == 0) EXMEM.cond = (IDEX.dataRs < IDEX.ins->Src);
+                else EXMEM.cond = (IDEX.dataRs < IDEX.dataRt);
+                break;
+            case BEQZ:
+                EXMEM.cond = (IDEX.dataRs == 0);
+                break;
+            case BNEZ:
+                EXMEM.cond = (IDEX.dataRs != 0);
+                break;
+            case BLEZ:
+                EXMEM.cond = (IDEX.dataRs <= 0);
+                break;
+            case BGEZ:
+                EXMEM.cond = (IDEX.dataRs >= 0);
+                break;
+            case BGTZ:
+                EXMEM.cond = (IDEX.dataRs > 0);
+                break;
+            case BLTZ:
+                EXMEM.cond = (IDEX.dataRs < 0);
+                break;
+            default:
                 break;
         }
     }
