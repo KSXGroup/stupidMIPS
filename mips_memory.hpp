@@ -99,7 +99,7 @@ public:
         byteOperator::setHalf(data, pos, d);
     }
 
-    inline void setBYTE(const OFFSETTYPE &pos, const int8_t &d){
+    inline void setByte(const OFFSETTYPE &pos, const int8_t &d){
         byteOperator::setByte(data, pos, d);
     }
 };

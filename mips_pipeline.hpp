@@ -11,7 +11,8 @@ private:
     MIPSTextParser *parser = nullptr;
     MIPSRegister *reg = nullptr;
     MIPSMemory *mem = nullptr;
-
+    BYTE exit = 0;
+    int32_t rtv = 0;
     //PIPELINE REGISTERS
     //refer to 'Computer Architecture (A quantitive approach)'
     struct{
@@ -24,6 +25,7 @@ private:
         uint32_t NPC = 0;
         int32_t dataRs = 0;
         int32_t dataRt = 0;
+        int32_t sysA1 = 0;
     }IDEX;
 
     struct{
@@ -31,6 +33,9 @@ private:
         int64_t aluOutput = 0;
         int32_t lmd = 0;
         uint8_t cond = 0;
+        int32_t dataRs = 0;
+        int32_t dataRt = 0;
+        int32_t sysA1 = 0;
     }EXMEM;
 
     struct{
@@ -64,11 +69,13 @@ public:
         reg->setWord((uint32_t)(0), parser->mapper.registerMapper["$fp"]);
     }
 
+private:
+
     void IF(){
         //TODO CHECK BRANCH
-        uint32_t InstPos = (uint32_t)(reg->getWord(parser->mapper["$pc"]));
+        uint32_t InstPos = (uint32_t)(reg->getWord(34));
         IFID.ins = parser->inst[InstPos];
-        reg->setWord(InstPos + 1, parser->mapper.registerMapper["$pc"]);
+        reg->setWord(InstPos + 1, 34);
         IFID.NPC = InstPos + 1;
     }
 
@@ -77,10 +84,19 @@ public:
         IDEX.dataRs = reg->getWord(IFID.ins->Rsrc);
         if(IFID.ins->srcType == 1) IDEX.dataRt = reg->getWord(IFID.ins->Src);
         IDEX.NPC = IFID.NPC;
+        if(IFID.ins == SYSCALL){
+            IDEX.dataRs = reg->getWord(parser->mapper.registerMapper["$v0"]);
+            IDEX.dataRt = reg->getWord(parser->mapper.registerMapper["$a0"]);
+            IDEX.sysA1 = reg->getWord(parser->mapper.registerMapper["$a1"]); //FOR SYSCALL PARAMATER IN $a1
+        }
     }
 
     void EX(){
+        string ipt = "";
         EXMEM.ins = IDEX.ins;
+        EXMEM.dataRs = IDEX.dataRs;
+        EXMEM.dataRt = IDEX.dataRt;
+        EXMEM.sysA1 = IDEX.sysA1;
         INSTRUCTION currentInst = IFID.ins->name;
         switch(currentInst){
             case ADD:
@@ -205,7 +221,7 @@ public:
                 if(IDEX.ins->srcType == 0) EXMEM.aluOutput = (IDEX.dataRs <= IDEX.ins->Src);
                 else EXMEM.aluOutput = (IDEX.dataRs <= IDEX.dataRt);
                 break;
-            case SLT:// 0 for immediate number, 1 for register
+            case SLT:
                 if(IDEX.ins->srcType == 0) EXMEM.aluOutput = (IDEX.dataRs < IDEX.ins->Src);
                 else EXMEM.aluOutput = (IDEX.dataRs < IDEX.dataRt);
                 break;
@@ -256,12 +272,99 @@ public:
             case BLTZ:
                 EXMEM.cond = (IDEX.dataRs < 0);
                 break;
-            default:
+            case J:
+            case B:
+            case JAL:
+            case JALR:
+                EXMEM.aluOutput = IDEX.ins->addressedLabel;
+                if(EXMEM.aluOutput == -1){
+#ifdef PIPELINE_DEBUG
+                    cerr << "\n\nB FUCK!\n\n";
+#endif
+                    exit(0);
+                }
                 break;
-        }
+            case LA:
+            case LB:
+            case LH:
+            case LW:
+            case SB:
+            case SH:
+            case SW:
+                if(IDEX.ins->addressedLabel == -1){
+                    EXMEM.aluOutput = IDEX.dataRs + IDEX.ins->offset;
+                }
+                else{
+                    EXMEM.aluOutput = IDEX.ins->addressedLabel;
+                }
+                break;
+            case SYSCALL:
+                switch(IDEX.dataRs){
+                   case 1:
+                        cout << IDEX.dataRt;
+                        break;
+
+                   case 5:
+                        cin >> EXMEM.aluOutput;
+                        break;
+                    case 10:
+                        exit = 1;
+                        break;
+                    case 17:
+                        exit = 1;
+                        rtv = IDEX.dataRt; // rt = $a0
+                        break;
+                    default:
+#ifdef PIPELINE_DEBUG
+                        cerr << "\n\nSYSCALL ERROR\n\n";
+                        exit(0);
+#endif
+                }
+
+                default:
+#ifdef PIPELINE_DEBUG
+                    cerr << "\n\nRUN TIME ERROR!\n\n";
+#endif
+                    exit(0);
+                    break;
+            }
     }
 
-    void MA(){}
+    void MA(){
+        string str = "";
+        uint32_t pos = 0;
+        MEMWB.ins = EXMEM.ins;
+        MEMWB.aluOutput = EXMEM.aluOutput;
+        INSTRUCTION currentInst = EXMEM.ins->name;
+        switch (currentInst){
+            case LB:
+                MEMWB.lmd =  mem->getBYTE(EXMEM.aluOutput);
+                break;
+            case LH:
+                MEMWB.lmd = mem->getHalf(EXMEM.aluOutput);
+                break;
+            case LW:
+                MEMWB.lmd = mem->getWord(EXMEM.aluOutput);
+                break;
+            case SB:
+                mem->setByte(EXMEM.aluOutput, (int8_t)EXMEM.dataRs);
+                break;
+            case SH:
+                mem->setHalf(EXMEM.aluOutput, (int16_t)EXMEM.dataRs);
+                break;
+            case SW:
+                mem->setWord(EXMEM.aluOutput, (int32_t)EXMEM.dataRs);
+                break;
+            case SYSCALL:
+                switch(EXMEM.dataRs){
+                    case 4:
+                        ipt = "";
+
+                    case 8:
+                    case 9:
+                }
+        }
+    }
 
     void WB(){}
 

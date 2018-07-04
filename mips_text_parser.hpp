@@ -153,6 +153,8 @@ public:
                                 if(ifMinus){
                                     argtmp32 = -argtmp32;
                                     ifMinus = 0;
+                                }    inline int32_t getWord(const int32_t &registerId){
+                                    return byteOperator::getWord(data[registerId], 0);
                                 }
                                 arg32.push_back(argtmp32);
                             }
