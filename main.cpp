@@ -6,5 +6,5 @@
 int main(){
         MIPSPipeline p("MipsTest/testsuit-1/array_test1-mahaojun.s");
         p.preProcess();
-        //p.runPipeline();
+        p.runPipeline();
 }

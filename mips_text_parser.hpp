@@ -13,6 +13,7 @@ private:
     uint32_t codeLength = 0;
     uint32_t pos = 0;
     uint32_t mainPos = 0;
+    uint32_t lineNumber = 0;
     MIPSMapper mapper;
     BYTE status = STATUS_DATA;
     vector<MIPSInstruction*> inst;
@@ -44,6 +45,7 @@ private:
         string tmp = "";
         while(pos < codeLength && (sourceCode[pos] == ' ' || sourceCode[pos] == '\t')) pos++;
         while(pos < codeLength && sourceCode[pos] != '\n') tmp += sourceCode[pos++];
+        if(sourceCode[pos] == '\n') lineNumber++;
         if(pos >= codeLength) return string();
         else pos++;
         if(tmp == "") return getNextLine();
@@ -561,7 +563,7 @@ public:
                             tmpPtr = new MIPSInstruction;
                             tmpPtr->name = currentInst;
                             tmpPtr->argCount = 1;
-                            while(linePos < lineLength && (tmpLine[linePos] != ' ' || tmpLine[linePos] != '\t')) ++linePos;
+                            while(linePos < lineLength && tmpLine[linePos] != ' ' && tmpLine[linePos] != '\t') ++linePos;
                             linePos = getLabelFromString(tmpLine, linePos, label);
                             if(!labelToIndex.count(label)){
                                 labels.push_back(label);

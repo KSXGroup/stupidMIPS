@@ -77,10 +77,10 @@ public:
 
     void runPipeline(){
         while(1){
-            if(STATUS_IF == 1 && STATUS_WB == 0) WB();
-            if(STATUS_IF == 1 && STATUS_MA == 0) MA();
-            if(STATUS_IF == 1 && STATUS_EX == 0) EX();
-            if(STATUS_IF == 1 && STATUS_EX == 0) ID();
+            if(STATUS_MA == 1 && STATUS_WB == 0) WB();
+            if(STATUS_EX == 1 && STATUS_MA == 0) MA();
+            if(STATUS_ID == 1 && STATUS_EX == 0) EX();
+            if(STATUS_IF == 1 && STATUS_ID == 0) ID();
             if(STATUS_IF == 0) IF();
             if(STATUS_IF && STATUS_EX && STATUS_MA && STATUS_WB && STATUS_ID){
                 STATUS_IF = STATUS_ID = STATUS_EX = STATUS_MA = STATUS_WB = 0;
@@ -113,7 +113,7 @@ private:
             reg->setWord(InstPos + 1,34);
         }
 #ifdef PIPELINE_DEBUG
-        cerr << "IF\n";
+        cerr << parser->inst[InstPos]->dispName<< " IF\n";
 #ifdef PIPELINE_PAUSE
         getchar();
 #endif
@@ -134,7 +134,7 @@ private:
         }
         STATUS_ID = 1;
 #ifdef PIPELINE_DEBUG
-        cerr << "ID\n";
+        cerr << IFID.ins->dispName <<" ID\n";
 #ifdef PIPELINE_PAUSE
         getchar();
 #endif
@@ -142,7 +142,7 @@ private:
     }
 
     void EX(){
-        if(EXMEM.ins == nullptr) return;
+        if(IDEX.ins == nullptr) return;
         int32_t tmpLo, tmpHi;
         uint32_t tmpA, tmpB, quotient, remainder;
         EXMEM.ins = IDEX.ins;
@@ -151,12 +151,12 @@ private:
         EXMEM.NPC = IDEX.NPC;
         EXMEM.sysA1 = IDEX.sysA1;
         EXMEM.cond = 0;
-        INSTRUCTION currentInst = IFID.ins->name;
+        INSTRUCTION currentInst = IDEX.ins->name;
         switch(currentInst){
             case ADD:
             case ADDU:
             case ADDIU:
-                if(IFID.ins->srcType == 0) EXMEM.aluOutput = IDEX.dataRs + IDEX.ins->Src;
+                if(IDEX.ins->srcType == 0) EXMEM.aluOutput = IDEX.dataRs + IDEX.ins->Src;
                 else EXMEM.aluOutput = IDEX.dataRs + IDEX.dataRt;
                 break;
             case SUB:
@@ -397,7 +397,7 @@ private:
                     break;
             }
 #ifdef PIPELINE_DEBUG
-        cerr << "EX\n";
+        cerr <<IDEX.ins->dispName<< "EX\n";
 #ifdef PIPELINE_PAUSE
         getchar();
 #endif
@@ -463,7 +463,7 @@ private:
         }
         STATUS_MA = 1;
 #ifdef PIPELINE_DEBUG
-        cerr << "MA\n";
+       cerr <<IFID.ins->dispName<<"MA\n";
 #ifdef PIPELINE_PAUSE
         getchar();
 #endif
@@ -547,7 +547,7 @@ private:
                 break;
         }
 #ifdef PIPELINE_DEBUG
-        cerr << "WB\n";
+       cerr <<IFID.ins->dispName<<"WB\n";
 #ifdef PIPELINE_PAUSE
         getchar();
 #endif
