@@ -45,7 +45,6 @@ public:
         return byteOperator::getByte(data[registerId], 0);
     }
 
-#ifdef PIPELINE_DEBUG
     void dispRegInt(){
         std::cerr << "\n";
         for(int i = 0; i < 35; ++i){
@@ -53,7 +52,6 @@ public:
         }
         std::cerr << "\n";
     }
-#endif
 };
 
 #endif

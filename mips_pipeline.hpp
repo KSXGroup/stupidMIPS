@@ -98,7 +98,7 @@ private:
         IFID.NPC = InstPos + 1;
 
 #ifdef PIPELINE_DEBUG
-        cerr << parser->inst[InstPos]->dispName<< " IF\n";
+         cerr <<"Line"<<parser->inst[InstPos]->lineNumer<<": "<< parser->inst[InstPos]->dispName<< " IF\n";
         reg->dispRegInt();
 #ifdef PIPELINE_PAUSE
         getchar();
@@ -109,7 +109,7 @@ private:
 
     void ID(){
         if(IFID.ins == nullptr) return;
-        if(IFID.ins->name == SW){
+        if(IFID.ins->name == SW && IFID.ins->Src == 30 && IFID.ins->offset == -128){
             cerr << "STOP!";
         }
         IDEX.ins = IFID.ins;
@@ -123,7 +123,7 @@ private:
         }
         STATUS_ID = 1;
 #ifdef PIPELINE_DEBUG
-        cerr << IFID.ins->dispName <<" ID\n";
+         cerr <<"Line"<<IFID.ins->lineNumer<<": "<< IFID.ins->dispName <<" ID\n";
         reg->dispRegInt();
 #ifdef PIPELINE_PAUSE
         getchar();
@@ -387,7 +387,7 @@ private:
             }
         if(EXMEM.cond == 1) reg->setWord((uint32_t)EXMEM.aluOutput, 34);
 #ifdef PIPELINE_DEBUG
-        cerr <<IDEX.ins->dispName<< " EX\n";
+         cerr <<"Line"<<IFID.ins->lineNumer<<": "<< IDEX.ins->dispName<< " EX\n";
         reg->dispRegInt();
 #ifdef PIPELINE_PAUSE
         getchar();
@@ -454,7 +454,7 @@ private:
         }
         STATUS_MA = 1;
 #ifdef PIPELINE_DEBUG
-       cerr <<IFID.ins->dispName<<" MA\n";
+        cerr <<"Line"<<IFID.ins->lineNumer<<": "<<IFID.ins->dispName<<" MA\n";
 #ifdef PIPELINE_PAUSE
         getchar();
 #endif
@@ -540,7 +540,7 @@ private:
                 break;
         }
 #ifdef PIPELINE_DEBUG
-       cerr <<IFID.ins->dispName<<" WB\n";
+       cerr <<"Line"<<IFID.ins->lineNumer<<": "<<IFID.ins->dispName<<" WB\n";
         reg->dispRegInt();
 #ifdef PIPELINE_PAUSE
         getchar();

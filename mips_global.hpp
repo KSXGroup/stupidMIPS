@@ -11,6 +11,7 @@ struct MIPSInstruction{
     int32_t offset = 0;
 #ifdef TEXT_DEBUG
     string dispName = "";
+    int lineNumer = 0;
 #endif
 };
 

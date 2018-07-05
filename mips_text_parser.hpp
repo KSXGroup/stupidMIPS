@@ -365,6 +365,7 @@ public:
                             }
 #ifdef TEXT_DEBUG
                         tmpPtr->dispName = tmpToken;
+                        tmpPtr->lineNumer = lineNumber;
                         cerr << "[" << tmpToken << "]:" ;
                         cerr << "Rdest: $" << (int)tmpPtr->Rdest << " ";
                         cerr << "Rsrc1: $" << (int)tmpPtr->Rsrc << " ";
@@ -414,6 +415,7 @@ public:
                             }
 #ifdef TEXT_DEBUG
                             tmpPtr->dispName = tmpToken;
+                            tmpPtr->lineNumer = lineNumber;
                             cerr << "[" << tmpToken << "]:" ;
                             cerr << "Rdest: $" << (int)tmpPtr->Rdest << " ";
                             if(tmpPtr->argCount == 3) cerr << "Rsrc1: $" << (int)tmpPtr->Rsrc << " ";
@@ -437,6 +439,7 @@ public:
                             tmpPtr->Rdest = mapper.registerMapper[Rdest];
                             tmpPtr->Rsrc = mapper.registerMapper[Rsrc1];
 #ifdef TEXT_DEBUG
+                            tmpPtr->lineNumer = lineNumber;
                             tmpPtr->dispName = tmpToken;
                             cerr << "[" << tmpToken << "]:" ;
                             cerr << "Rdest: $" << (int)tmpPtr->Rdest << " ";
@@ -456,6 +459,7 @@ public:
                             linePos = stringSkipForNumberAndRegister(tmpLine, linePos);
                             linePos = getNumberFromString(tmpLine, linePos, tmpPtr->Src);
 #ifdef TEXT_DEBUG
+                            tmpPtr->lineNumer = lineNumber;
                             tmpPtr->dispName = tmpToken;
                             cerr << "[" << tmpToken << "]:" ;
                             cerr << "Rdest: $" << (int)tmpPtr->Rdest << " ";
@@ -474,8 +478,8 @@ public:
                             tmpPtr->argCount = 3;
                             tmpPtr->name = currentInst;
                             linePos = stringSkipForNumberAndRegister(tmpLine, linePos);
-                            linePos = getRegisterFromString(tmpLine, linePos, Rdest);
-                            tmpPtr->Rdest = mapper.registerMapper[Rdest];
+                            linePos = getRegisterFromString(tmpLine, linePos, Rsrc1);
+                            tmpPtr->Rsrc = mapper.registerMapper[Rsrc1];
                             linePos = stringSkipForNumberAndRegister(tmpLine, linePos);
                             if(tmpLine[linePos] == '$'){
                                 linePos = getRegisterFromString(tmpLine, linePos, Rsrc1);
@@ -494,6 +498,7 @@ public:
                             }
                             tmpPtr->addressedLabel = labelToIndex[label];
 #ifdef TEXT_DEBUG
+                            tmpPtr->lineNumer = lineNumber;
                             tmpPtr->dispName = tmpToken;
                             cerr << "[" << tmpToken << "]:" ;
                             cerr << "Rdest: $" << (int)tmpPtr->Rdest << " ";
@@ -529,6 +534,7 @@ public:
                             }
                             tmpPtr->addressedLabel = labelToIndex[label];
 #ifdef TEXT_DEBUG
+                            tmpPtr->lineNumer = lineNumber;
                             tmpPtr->dispName = tmpToken;
                             cerr << "[" << tmpToken << "]:" ;
                             cerr << "Rdest: $" << (int)tmpPtr->Rdest << " ";
@@ -550,6 +556,7 @@ public:
                              linePos = getRegisterFromString(tmpLine, linePos, Rsrc1);
                              tmpPtr->Rsrc = mapper.registerMapper[Rsrc1];
 #ifdef TEXT_DEBUG
+                            tmpPtr->lineNumer = lineNumber;
                             tmpPtr->dispName = tmpToken;
                             cerr << "[" << tmpToken << "]:" ;
                             cerr << "Rsrc: $" << (int)tmpPtr->Rsrc << "\n";
@@ -572,6 +579,7 @@ public:
                             }
                             tmpPtr->addressedLabel = labelToIndex[label];
 #ifdef TEXT_DEBUG
+                            tmpPtr->lineNumer = lineNumber;
                             tmpPtr->dispName = tmpToken;
                             cerr << "[" << tmpToken << "]:" ;
                             cerr << "Label Address: ";
@@ -619,6 +627,7 @@ public:
                                 tmpPtr->addressedLabel = labelToIndex[label];
                             }
 #ifdef TEXT_DEBUG
+                            tmpPtr->lineNumer = lineNumber;
                             tmpPtr->dispName = tmpToken;
                             cerr << "[" << tmpToken << "]:" ;
                             cerr << "Rdest: $" << (int)tmpPtr->Rdest << " ";
@@ -641,6 +650,7 @@ public:
                             tmpPtr->name = currentInst;
                             tmpPtr->argCount = 0;
 #ifdef TEXT_DEBUG
+                            tmpPtr->lineNumer = lineNumber;
                             tmpPtr->dispName = tmpToken;
                             cerr << "[" << tmpToken << "]:\n";
 #endif
