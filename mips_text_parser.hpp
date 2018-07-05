@@ -24,6 +24,7 @@ public:
     MIPSTextParser(const char *fileName){
         //READ SOURCE FILE
         std::ifstream fin(fileName);
+        inst.reserve(1500);
         fin.seekg(0, std::ios::end);
         codeLength = fin.tellg();
         sourceCode = new char[codeLength + 1];
@@ -629,7 +630,7 @@ public:
                             ++linePos;
                             while(linePos < lineLength && tmpLine[linePos] == ' ') ++linePos;
                             if(tmpLine[linePos] == '-' || (tmpLine[linePos] <= '9' && tmpLine[linePos] >= '0')){
-                                linePos++;
+                                if(tmpLine[linePos] == '-') linePos++;
                                 int32_t num = 0;
                                 linePos = getNumberFromString(tmpLine, linePos, num);
                                 tmpPtr->offset = num;

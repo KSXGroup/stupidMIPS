@@ -109,9 +109,10 @@ private:
     void ID(){
         if(IFID.ins == nullptr) return;
 #ifdef TEXT_DEBUG
-        if(IFID.ins->lineNumer == 820){
+        if(IFID.ins->lineNumer == 495){
             int a = 0;
-            reg->dispRegInt();
+            //reg->dispRegInt();
+            for(int i = 0; i < 30; ++i) {cerr <<"[DBG] ";cerr << mem->getByte(reg->getWord(30) - 4 + i) << " ";}
         }
 #endif
         IDEX.ins = IFID.ins;
@@ -449,7 +450,7 @@ private:
                     case 8:
                         cin >> str;
                         pos = EXMEM.dataRt;
-                        for(int32_t i = 0; i <= EXMEM.sysA1 - 1 && i < str.length(); ++i) mem->setByte(pos++, (int8_t)str[i]);
+                        for(int32_t i = 0; i < str.length(); ++i) mem->setByte(pos++, (int8_t)str[i]);
                         mem->setByte(pos, (int8_t)'\0');
                         break;
                     case 9:
