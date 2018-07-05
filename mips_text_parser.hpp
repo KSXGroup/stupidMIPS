@@ -24,6 +24,10 @@ public:
     MIPSTextParser(const char *fileName){
         //READ SOURCE FILE
         std::ifstream fin(fileName);
+        if(fin.fail() || !fin.is_open()){
+            std::cout << "FILE ERROR\n";
+            exit(-1);
+        }
         inst.reserve(1500);
         fin.seekg(0, std::ios::end);
         codeLength = fin.tellg();

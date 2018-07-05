@@ -4,8 +4,10 @@
 #include "mips_simulator.hpp"
 #include "mips_pipeline.hpp"
 int main(int argc, char *argv[]){
-        MIPSPipeline p(argv[1]);
-        p.preProcess();
-        p.runPipeline();
+        std::ios::sync_with_stdio(0);
+        std::cin.tie(0);
+        std::cout.tie(0);
+        MIPSSimulator smult(argv[1]);
+        smult.run();
         return 0;
 }

@@ -15,7 +15,7 @@ private:
     MIPSMemory *mem = nullptr;
     BYTE STATUS_WB = 0, STATUS_MA = 0, STATUS_EX = 0, STATUS_ID = 0,STATUS_IF = 0;
     //PIPELINE REGISTERS
-    //refer to 'Computer Architecture (A quantitive approach)'
+    //refer to 'Computer Architecture (A Quantitive Approach)'
     struct{
         MIPSInstruction *ins = nullptr;
         uint32_t NPC = 0;
