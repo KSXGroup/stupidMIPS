@@ -552,13 +552,16 @@ public:
                         case JALR:
                         case MFHI:
                         case MFLO:
+                             if(currentInst == MFHI){
+                                    int a = 0;
+                             }
                              tmpPtr = new MIPSInstruction;
                              tmpPtr->name = currentInst;
                              tmpPtr->argCount = 1;
                              linePos = stringSkipForNumberAndRegister(tmpLine, linePos);
                              linePos = getRegisterFromString(tmpLine, linePos, Rsrc1);
                              if(currentInst == JR || currentInst == JALR) tmpPtr->Rsrc = mapper.registerMapper[Rsrc1];
-                             else tmpPtr->Rdest = mapper.instructionMapper[Rsrc1];
+                             else tmpPtr->Rdest = mapper.registerMapper[Rsrc1];
 #ifdef TEXT_DEBUG
                             tmpPtr->lineNumer = lineNumber;
                             tmpPtr->dispName = tmpToken;

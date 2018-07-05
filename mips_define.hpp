@@ -1,10 +1,10 @@
 #ifndef _MIPS_DEFINE_H_
 #define _MIPS_DEFINE_H_
-#define PIPELINE_DEBUG
-#define LINE_PAUSE
+//#define PIPELINE_DEBUG
+//#define LINE_PAUSE
 //#define PIPELINE_PAUSE
 //#define STATIC_DATA_DEBUG
-#define TEXT_DEBUG
+//#define TEXT_DEBUG
 //#define PARSED_PROGRAM_DEBUG
 #include <iostream>
 #include <fstream>
