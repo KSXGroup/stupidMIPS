@@ -392,7 +392,9 @@ public:
                                 linePos = stringSkipForNumberAndRegister(tmpLine, linePos);
                                 if(linePos == lineLength){
                                     tmpPtr->argCount = 2;
+                                    tmpPtr->Rsrc = tmpPtr->Rdest;
                                     tmpPtr->Src = mapper.registerMapper[Rsrc1];
+                                    tmpPtr->srcType = 1;
                                 }
                                 else{
                                     tmpPtr->argCount = 3;
@@ -417,7 +419,8 @@ public:
                             tmpPtr->dispName = tmpToken;
                             tmpPtr->lineNumer = lineNumber;
                             cerr << "[" << tmpToken << "]:" ;
-                            cerr << "Rdest: $" << (int)tmpPtr->Rdest << " ";
+                            if(tmpPtr->argCount == 2) cerr << "Rsrc1: $" << (int)tmpPtr->Rsrc << " ";
+                            if(tmpPtr->argCount == 3) cerr << "Rdest: $" << (int)tmpPtr->Rdest << " ";
                             if(tmpPtr->argCount == 3) cerr << "Rsrc1: $" << (int)tmpPtr->Rsrc << " ";
                             cerr << "SrcType:" << ((tmpPtr->srcType == 1) ? "Register: $" : "ImmediateNumber:" );
                             cerr << (int)tmpPtr->Src << "\n";
@@ -523,8 +526,8 @@ public:
                             tmpPtr->argCount = 2;
                             tmpPtr->name = currentInst;
                             linePos = stringSkipForNumberAndRegister(tmpLine, linePos);
-                            linePos = getRegisterFromString(tmpLine, linePos, Rdest);
-                            tmpPtr->Rdest = mapper.registerMapper[Rdest];
+                            linePos = getRegisterFromString(tmpLine, linePos, Rsrc1);
+                            tmpPtr->Rsrc = mapper.registerMapper[Rsrc1];
                             //while(tmpLine[linePos] != ' ' && tmpLine[linePos] != '\t') ++linePos;
                             linePos = getLabelFromString(tmpLine, linePos, label);
                             if(!labelToIndex.count(label)){
@@ -537,7 +540,7 @@ public:
                             tmpPtr->lineNumer = lineNumber;
                             tmpPtr->dispName = tmpToken;
                             cerr << "[" << tmpToken << "]:" ;
-                            cerr << "Rdest: $" << (int)tmpPtr->Rdest << " ";
+                            cerr << "Rsrc: $" << (int)tmpPtr->Rsrc << " ";
                             cerr << "Label Address: ";
                             if(tmpPtr->addressedLabel == -1) cerr << "<NOT DECIDED YET>\n";
                             else cerr << tmpPtr->addressedLabel << "\n";
@@ -554,12 +557,14 @@ public:
                              tmpPtr->argCount = 1;
                              linePos = stringSkipForNumberAndRegister(tmpLine, linePos);
                              linePos = getRegisterFromString(tmpLine, linePos, Rsrc1);
-                             tmpPtr->Rsrc = mapper.registerMapper[Rsrc1];
+                             if(currentInst == JR || currentInst == JALR) tmpPtr->Rsrc = mapper.registerMapper[Rsrc1];
+                             else tmpPtr->Rdest = mapper.instructionMapper[Rsrc1];
 #ifdef TEXT_DEBUG
                             tmpPtr->lineNumer = lineNumber;
                             tmpPtr->dispName = tmpToken;
                             cerr << "[" << tmpToken << "]:" ;
-                            cerr << "Rsrc: $" << (int)tmpPtr->Rsrc << "\n";
+                            if(currentInst == JR || currentInst == JALR) cerr << "Rsrc: $" << (int)tmpPtr->Rsrc << "\n";
+                            else cerr << "Rdest: $" << (int)tmpPtr->Rdest << "\n";
 #endif
                             inst.push_back(tmpPtr);
                             tmpPtr = nullptr;
@@ -630,14 +635,15 @@ public:
                             tmpPtr->lineNumer = lineNumber;
                             tmpPtr->dispName = tmpToken;
                             cerr << "[" << tmpToken << "]:" ;
-                            cerr << "Rdest: $" << (int)tmpPtr->Rdest << " ";
+                            if(currentInst == SB || currentInst == SH || currentInst == SW) cerr << "Rsrc: $" << (int)tmpPtr->Rsrc << " ";
+                            else cerr << "Rdest: $" << (int)tmpPtr->Rdest << " ";
                             if(tmpPtr->argCount == 2){
                                 cerr << "Label Address: ";
                                 if(tmpPtr->addressedLabel == -1) cerr << "<NOT DECIDED YET>\n";
                                 else cerr << tmpPtr->addressedLabel << "\n";
                             }
                             else{
-                                cerr << "Rsrc: $"<< (int)tmpPtr->Rsrc << " ";
+                                cerr << "Src: $"<< (int)tmpPtr->Src << " ";
                                 cerr << "Offset:" << tmpPtr->offset << "\n";
                             }
 #endif

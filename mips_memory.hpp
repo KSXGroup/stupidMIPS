@@ -38,36 +38,6 @@ public:
         staticPosition += 1;
     }
 
-    inline void insertWordToHeap(const int32_t &d){
-        byteOperator::setWord(data, dynamicPosition, d);
-        dynamicPosition += 4;
-    }
-
-    inline void insertHalfToHeap(const int16_t &d){
-        byteOperator::setHalf(data, dynamicPosition, d);
-        dynamicPosition += 2;
-    }
-
-    inline void insertByteToHeap(const int8_t &d){
-        byteOperator::setByte(data, dynamicPosition, d);
-        dynamicPosition += 1;
-    }
-
-    inline void insertWordToStack(const int32_t &d){
-        stackPosition -= 4;
-        byteOperator::setByte(data, stackPosition, d);
-    }
-
-    inline void insertHalfToStack(const int16_t &d){
-        stackPosition -= 2;
-        byteOperator::setHalf(data, stackPosition, d);
-    }
-
-    inline void insertBYTE(const int8_t &d){
-        stackPosition -= 1;
-        byteOperator::setByte(data, stackPosition, d);
-    }
-
     inline uint32_t getWordUnsigned(const OFFSETTYPE &pos){
         return byteOperator::getWordUnsigned(data, pos);
     }

@@ -109,9 +109,9 @@ private:
 
     void ID(){
         if(IFID.ins == nullptr) return;
-        if(IFID.ins->name == SW && IFID.ins->Src == 30 && IFID.ins->offset == -128){
+        /*if(IFID.ins->name == SW && IFID.ins->Src == 30 && IFID.ins->offset == -128){
             cerr << "STOP!";
-        }
+        }*/
         IDEX.ins = IFID.ins;
         IDEX.dataRs = reg->getWord(IFID.ins->Rsrc);
         if(IFID.ins->srcType == 1) IDEX.dataRt = reg->getWord(IFID.ins->Src);
@@ -133,8 +133,8 @@ private:
 
     void EX(){
         if(IDEX.ins == nullptr) return;
-        int32_t tmpLo, tmpHi;
-        uint32_t tmpA, tmpB, quotient, remainder;
+        int32_t tmpLo = 0, tmpHi = 0;
+        uint32_t tmpA = 0, tmpB = 0, quotient = 0, remainder = 0;
         EXMEM.ins = IDEX.ins;
         EXMEM.dataRs = IDEX.dataRs;
         EXMEM.dataRt = IDEX.dataRt;
@@ -202,14 +202,14 @@ private:
                         tmpB = IDEX.ins->Src;
                         quotient = tmpA / tmpB;
                         remainder = tmpA % tmpB;
-                        EXMEM.aluOutput =  ((((uint64_t)remainder) << 32) | (quotient));
+                        EXMEM.aluOutput =  ((((uint64_t)remainder) << 32) | (quotient & 0xffffffff));
                     }
                     else{
                         tmpA = IDEX.dataRs;
                         tmpB = IDEX.dataRt;
                         quotient = tmpA / tmpB;
                         remainder = tmpA % tmpB;
-                        EXMEM.aluOutput =  ((((uint64_t)remainder) << 32) | (quotient));
+                        EXMEM.aluOutput =  ((((uint64_t)remainder) << 32) | (quotient & 0xffffffff));
                     }
                 }
                 else{
@@ -489,7 +489,7 @@ private:
             case DIV:
             case DIVU:
                 if(MEMWB.ins->argCount == 2){
-                    tmpLo = MEMWB.aluOutput & ((int64_t)(0xffff));
+                    tmpLo = MEMWB.aluOutput & ((int64_t)(0xffffffff));
                     tmpHi = (MEMWB.aluOutput >> 32);
                     reg->setWord(tmpHi, 33);
                     reg->setWord(tmpLo, 32);
