@@ -226,6 +226,19 @@ public:
                                         case '\"':
                                             argTmpLine += '\"';
                                             linePos++;
+                                            break;
+                                        case '0':
+                                            argTmpLine += '\0';
+                                            linePos++;
+                                            break;
+                                        case 't':
+                                            argTmpLine += '\t';
+                                            linePos++;
+                                            break;
+                                        case '\'':
+                                            argTmpLine += '\'';
+                                            linePos++;
+                                            break;
                                         default:
                                             linePos++;
                                             break;

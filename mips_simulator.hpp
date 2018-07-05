@@ -3,5 +3,6 @@
 #include "mips_define.hpp"
 class MIPSSimulator{
 private:
+
 };
 #endif

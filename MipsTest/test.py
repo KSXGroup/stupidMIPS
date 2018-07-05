@@ -85,9 +85,10 @@ def main():
         print "TEST  %-40s" % cases[i],
         sys.stdout.flush()
         if not testCase(cases[i]):
-            break
-        os.remove(cases[i] + '.out')
-        print "passed"
+            print "fail"
+        else:
+	    os.remove(cases[i] + '.out')
+	    print "passed"
 
 if __name__ == '__main__':
     main()

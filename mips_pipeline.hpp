@@ -8,7 +8,6 @@
 using std::cin;
 using std::cout;
 using std::cerr;
-int pos = 1;
 class MIPSPipeline{
 private:
     MIPSTextParser *parser = nullptr;
@@ -110,8 +109,8 @@ private:
     void ID(){
         if(IFID.ins == nullptr) return;
 #ifdef TEXT_DEBUG
-        if(IFID.ins->lineNumer == 409){
-            cerr << "COUNT #" << pos++ << ":";
+        if(IFID.ins->lineNumer == 395){
+
             reg->dispRegInt();
         }
 #endif
