@@ -79,12 +79,12 @@ private:
         return st;
     }
 
-    inline uint8_t getNumberFromString(const string &s, uint8_t st, int16_t &res){
+    inline uint8_t getNumberFromString(const string &s, uint8_t st, int32_t &res){
         string tmp = "";
         bool ifMinus = 0;
         if(s[st - 1] == '-') ifMinus = 1;
         while(st < s.length() && s[st] >= '0' && s[st] <= '9') tmp += s[st++];
-        res = byteConvert::stringToInt16(tmp);
+        res = byteConvert::stringToInt32(tmp);
         if(ifMinus) res = -res;
         return st;
     }
@@ -630,7 +630,7 @@ public:
                             while(linePos < lineLength && tmpLine[linePos] == ' ') ++linePos;
                             if(tmpLine[linePos] == '-' || (tmpLine[linePos] <= '9' && tmpLine[linePos] >= '0')){
                                 linePos++;
-                                int16_t num = 0;
+                                int32_t num = 0;
                                 linePos = getNumberFromString(tmpLine, linePos, num);
                                 tmpPtr->offset = num;
                                 linePos = stringSkipForNumberAndRegister(tmpLine, linePos);

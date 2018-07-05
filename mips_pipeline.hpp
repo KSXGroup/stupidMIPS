@@ -109,8 +109,8 @@ private:
     void ID(){
         if(IFID.ins == nullptr) return;
 #ifdef TEXT_DEBUG
-        if(IFID.ins->lineNumer == 395){
-
+        if(IFID.ins->lineNumer == 820){
+            int a = 0;
             reg->dispRegInt();
         }
 #endif

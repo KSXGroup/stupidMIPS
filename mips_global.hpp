@@ -5,7 +5,7 @@
 struct MIPSInstruction{
     INSTRUCTION name = NOP;
     char Rdest = 0, Rsrc = 0, argCount = 0;
-    int16_t Src = 0;
+    int32_t Src = 0;
     char srcType = 0; // 0 for immediate number, 1 for register
     int32_t addressedLabel = -1; //label is translated to address(inner line number)
     int32_t offset = 0;
