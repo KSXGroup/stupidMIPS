@@ -360,6 +360,7 @@ public:
                                 tmpPtr->Src = mapper.registerMapper[Src2];
                             }
                             else{
+                                tmpPtr->srcType = 0;
                                 tmpPtr->Src = 0;
                                 linePos = getNumberFromString(tmpLine, linePos, tmpPtr->Src);
                             }
@@ -504,7 +505,7 @@ public:
                             tmpPtr->lineNumer = lineNumber;
                             tmpPtr->dispName = tmpToken;
                             cerr << "[" << tmpToken << "]:" ;
-                            cerr << "Rdest: $" << (int)tmpPtr->Rdest << " ";
+                            cerr << "Rsrc: $" << (int)tmpPtr->Rsrc << " ";
                             cerr << "Src: ";
                             if(tmpPtr->srcType) cerr << "Register: $";
                             else cerr << "Immediate:";

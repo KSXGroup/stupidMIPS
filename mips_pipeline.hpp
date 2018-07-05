@@ -8,12 +8,12 @@
 using std::cin;
 using std::cout;
 using std::cerr;
+int pos = 1;
 class MIPSPipeline{
 private:
     MIPSTextParser *parser = nullptr;
     MIPSRegister *reg = nullptr;
     MIPSMemory *mem = nullptr;
-    int32_t rtv = 0;
     BYTE STATUS_WB = 0, STATUS_MA = 0, STATUS_EX = 0, STATUS_ID = 0,STATUS_IF = 0;
     //PIPELINE REGISTERS
     //refer to 'Computer Architecture (A quantitive approach)'
@@ -109,9 +109,12 @@ private:
 
     void ID(){
         if(IFID.ins == nullptr) return;
-        /*if(IFID.ins->name == SW && IFID.ins->Src == 30 && IFID.ins->offset == -128){
-            cerr << "STOP!";
-        }*/
+#ifdef TEXT_DEBUG
+        if(IFID.ins->lineNumer == 409){
+            cerr << "COUNT #" << pos++ << ":";
+            reg->dispRegInt();
+        }
+#endif
         IDEX.ins = IFID.ins;
         IDEX.dataRs = reg->getWord(IFID.ins->Rsrc);
         if(IFID.ins->srcType == 1) IDEX.dataRt = reg->getWord(IFID.ins->Src);
@@ -172,7 +175,7 @@ private:
                         tmpLo = IDEX.dataRs / IDEX.dataRt;
                         tmpHi = IDEX.dataRs % IDEX.dataRt;
                     }
-                    EXMEM.aluOutput = ((((int64_t)tmpHi) << 32) | (tmpLo));
+                    EXMEM.aluOutput = ((((int64_t)tmpHi) << 32) | (tmpLo & 0xffffffff));
                 }
                 else{
                     if(IFID.ins->srcType == 0){
@@ -241,12 +244,20 @@ private:
                 }
                 break;
             case REM:
-            case REMU:
                 if(IDEX.ins->srcType == 0){
                     EXMEM.aluOutput = (IDEX.dataRs % IDEX.ins->Src);
                 }
                 else{
                     EXMEM.aluOutput = (IDEX.dataRs % IDEX.dataRt);
+                }
+                break;
+
+            case REMU:
+                if(IDEX.ins->srcType == 0){
+                    EXMEM.aluOutput = ((uint32_t)(IDEX.dataRs)) % ((uint32_t)(IDEX.ins->Src));
+                }
+                else{
+                    EXMEM.aluOutput = ((uint32_t)(IDEX.dataRs) % (uint32_t)(IDEX.dataRt));
                 }
                 break;
             case SEQ:
@@ -481,8 +492,9 @@ private:
             case SGE:
             case SGT:
             case SLE:
+            case SLT:
             case SNE:
-                reg->setWord(MEMWB.aluOutput,MEMWB.ins->Rdest);
+                reg->setWord(MEMWB.aluOutput, MEMWB.ins->Rdest);
                 break;
             case MUL:
             case MULU:

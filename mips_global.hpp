@@ -76,6 +76,7 @@ public:
         instructionMapper["sge"] = SGE;
         instructionMapper["sle"] = SLE;
         instructionMapper["slt"] = SLT;
+        instructionMapper["sgt"] = SGT;
         instructionMapper["sne"] = SNE;
         instructionMapper["b"] = B;
         instructionMapper["beq"] = BEQ;
