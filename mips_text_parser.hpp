@@ -571,9 +571,6 @@ public:
                         case JALR:
                         case MFHI:
                         case MFLO:
-                             if(currentInst == MFHI){
-                                    int a = 0;
-                             }
                              tmpPtr = new MIPSInstruction;
                              tmpPtr->name = currentInst;
                              tmpPtr->argCount = 1;

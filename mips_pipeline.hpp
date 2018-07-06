@@ -120,6 +120,7 @@ private:
         IDEX.STALL = IFID.STALL;
         if(IFID.STALL == 1) return;
         INSTRUCTION currentInst = IFID.ins->name;
+        BYTE sys = 0;
         IDEX.NPC = IFID.NPC;
         IDEX.ins = IFID.ins;
         if(currentInst >= B && currentInst <= JALR) PC_STALL = 1;
@@ -150,6 +151,10 @@ private:
                 }
             }
             else{
+                if(currentInst >= MUL && currentInst <= DIVU){
+                    reg->locker[32];
+                    reg->locker[33];
+                }
                 if(IFID.ins->srcType == 1 && reg->locker[IFID.ins->Src] == 1){
                     IDEX.STALL = 1;
                     return;
@@ -173,15 +178,35 @@ private:
             }
         }
         else if(IFID.ins->Src == SYSCALL){
-
+            if(reg->locker[2] == 1){
+                IDEX.STALL = 1;
+                return;
+            }
+            s = reg->getByte(2);
+            switch(s){
+                case 1:
+                case 4:
+                case 9:
+                    if(reg->locker[4] == 1){
+                        IDEX.STALL = 1;
+                        return;
+                    }
+                    break;
+                case 8:
+                    if(reg->locker[4] || reg->locker[5]){
+                        IDEX.STALL = 1;
+                        return;
+                    }
+            }
         }
-        /*IDEX.dataRs = reg->getWord(IFID.ins->Rsrc);
+        IDEX.dataRs = reg->getWord(IFID.ins->Rsrc);
         if(IFID.ins->srcType == 1) IDEX.dataRt = reg->getWord(IFID.ins->Src);
         if(currentInst == SYSCALL){
             IDEX.dataRs = reg->getWord(2);
             IDEX.dataRt = reg->getWord(4);
             if(IDEX.dataRs == 8) IDEX.sysA1 = reg->getWord(5);
-        }*/
+        }
+        if(IFID.ins->Rdest != 0) reg->locker[IFID.ins->Rdest];
 #ifdef PIPELINE_DEBUG
          cerr <<"Line"<<IFID.ins->lineNumer<<": "<< IFID.ins->dispName <<" ID\n";
         reg->dispRegInt();
@@ -558,6 +583,7 @@ private:
             case SLT:
             case SNE:
                 reg->setWord(MEMWB.aluOutput, MEMWB.ins->Rdest);
+                reg->locker[MEMWB.ins->Rdest] = 0;
                 break;
             case MUL:
             case MULU:
@@ -568,38 +594,50 @@ private:
                     tmpHi = (MEMWB.aluOutput >> 32);
                     reg->setWord(tmpHi, 33);
                     reg->setWord(tmpLo, 32);
+                    reg->locker[32] = 0;
+                    reg->locker[33] = 0;
                 }
                 else{
                     reg->setWord(MEMWB.aluOutput, MEMWB.ins->Rdest);
+                    reg->locker[MEMWB.ins->Rdest] = 0;
                 }
                 break;
             case LA:
                 reg->setWord(MEMWB.aluOutput, MEMWB.ins->Rdest);
+                 reg->locker[MEMWB.ins->Rdest] = 0;
                 break;
             case LB:
                 reg->setByte(MEMWB.lmd, MEMWB.ins->Rdest);
+                 reg->locker[MEMWB.ins->Rdest] = 0;
                 break;
             case LH:
                 reg->setHalf(MEMWB.lmd, MEMWB.ins->Rdest);
+                 reg->locker[MEMWB.ins->Rdest] = 0;
                 break;
             case LW:
                 reg->setWord(MEMWB.lmd, MEMWB.ins->Rdest);
+                 reg->locker[MEMWB.ins->Rdest] = 0;
                 break;
             case MOVE:
                 reg->setWord(MEMWB.dataRs, MEMWB.ins->Rdest);
+                 reg->locker[MEMWB.ins->Rdest] = 0;
                 break;
             case MFHI:
                 reg->setWord(reg->getWord(33), MEMWB.ins->Rdest);
+                 reg->locker[MEMWB.ins->Rdest] = 0;
                 break;
             case MFLO:
                 reg->setWord(reg->getWord(32), MEMWB.ins->Rdest);
+                 reg->locker[MEMWB.ins->Rdest] = 0;
                 break;
             case JAL:
             case JALR:
                 reg->setWord(MEMWB.NPC, 31);
+                 reg->locker[31] = 0;
                 break;
             case LI:
                 reg->setWord(MEMWB.ins->Src, MEMWB.ins->Rdest);
+                 reg->locker[MEMWB.ins->Rdest] = 0;
                 break;
             case SYSCALL:
                 switch(MEMWB.dataRs){
@@ -611,6 +649,8 @@ private:
                         break;
                     default: break;
                 }
+                 reg->locker[MEMWB.ins->Rdest] = 0;
+            break;
             default:
                 break;
         }
