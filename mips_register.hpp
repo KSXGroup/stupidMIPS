@@ -6,19 +6,24 @@ class MIPSRegister{
 friend class byteOperator;
 friend class MIPSPipeline;
 private:
-    BYTE **data;
+    BYTE **data = nullptr;
+    BYTE *locker = nullptr;
 public:
     MIPSRegister(){
         data = new BYTE*[35];
+        locker = new BYTE[35];
         for(int i = 0; i < 35; ++i){
+            locker[i] = 0;
             data[i] = new BYTE[4];
             for(int j = 0; j < 4; ++j) data[i][j] = 0;
         }
     }
 
     ~MIPSRegister(){
+        delete [] locker;
         for(int i = 0; i < 35; ++i) delete [] data[i];
         data = nullptr;
+        locker = nullptr;
     }
 
     inline void setWord(const int32_t &d, const int32_t registerId){

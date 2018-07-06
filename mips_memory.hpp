@@ -7,7 +7,7 @@ friend class byteOperator;
 friend class MIPSTextParser;
 friend class MIPSPipeline;
 private:
-    BYTE *data;
+    BYTE *data = nullptr;
     OFFSETTYPE staticPosition = 0;
     OFFSETTYPE dynamicPosition = 0;
     OFFSETTYPE stackPosition = 4 * 1024 * 1024;
