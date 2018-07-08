@@ -77,14 +77,11 @@ public:
 
     void runPipeline(){
         while(1){
-            if(STATUS_MA == 1 && STATUS_WB == 0) WB();
-            if(STATUS_EX == 1 && STATUS_MA == 0) MA();
-            if(STATUS_ID == 1 && STATUS_EX == 0) EX();
-            if(STATUS_IF == 1 && STATUS_ID == 0) ID();
-            if(STATUS_IF == 0) IF();
-            if(STATUS_IF && STATUS_EX && STATUS_MA && STATUS_WB && STATUS_ID){
-                STATUS_IF = STATUS_ID = STATUS_EX = STATUS_MA = STATUS_WB = 0;
-            }
+             IF();
+             ID();
+             EX();
+             MA();
+             WB();
         }
     }
 private:
