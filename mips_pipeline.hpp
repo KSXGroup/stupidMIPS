@@ -538,7 +538,7 @@ private:
             case SYSCALL:
                 switch(IDEX.dataRs){
                    case 1:
-                        cerr << IDEX.dataRt; //COUT CHANGED
+                        cout << IDEX.dataRt; //COUT CHANGED
                         break;
 
                    case 5:
@@ -617,7 +617,7 @@ private:
                             str += (char)(mem->getByte(pos));
                             ++pos;
                         }
-                        cerr << str; //COUT CHANGED
+                        cout << str; //COUT CHANGED
                         break;
                     case 8:
                         cin >> str;
