@@ -55,10 +55,24 @@ public:
     void dispRegInt(){
         std::cerr << "\n";
         for(int i = 0; i < 35; ++i){
-            std::cerr <<"$"<< i << ":" << getWord(i) << "\t";
+            std::cerr <<"$"<< i << ":" << getWord(i) << "-" << (int)locker[i] << "\t";
         }
         std::cerr << "\n";
     }
+#ifdef REG_DEBUG
+    void dispRegIntCout(){
+        for(int i = 0; i < 34; ++i){
+            std::cout <<"$"<< i << ":" << getWord(i) << "\t";
+            if(i > 0 && i % 10 == 0) std::cout << "\n";
+        }
+        std::cout << "\n";
+    }
+#endif
+
+
+
+
+
 };
 
 #endif

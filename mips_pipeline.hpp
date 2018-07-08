@@ -13,6 +13,8 @@ private:
     MIPSTextParser *parser = nullptr;
     MIPSRegister *reg = nullptr;
     MIPSMemory *mem = nullptr;
+    char branchHistoryTable[BRANCH_PREDICTOR_CACHE];
+    char globalPredictTable[BRANCH_PREDICTOR_CACHE][(1 << PREDICT_BYTE)];
     //PIPELINE REGISTERS
     //refer to 'Computer Architecture (A Quantitive Approach)'
     BYTE PC_STALL = 0;
@@ -55,11 +57,29 @@ private:
     }MEMWB;
 
 
+    //AN IMPLEMENTATION OF A FOUR BIT TWO LEVEL ADAPATIVE BRANCH PREDICTOR
+    inline void insHistory(const int &insPos, const char ifTaken){
+        globalPredictTable[insPos][branchHistoryTable[insPos]] <<= 1;
+        globalPredictTable[insPos][branchHistoryTable[insPos]] &= 3;
+        globalPredictTable[insPos][branchHistoryTable[insPos]] += bool(ifTaken);
+        branchHistoryTable[insPos] <<=1;
+        branchHistoryTable[insPos] &= 0xf;
+        branchHistoryTable[insPos] += bool(ifTaken);
+    }
+
+    inline char getPrediction(const int &insPos){
+        return bool(globalPredictTable[insPos][branchHistoryTable[insPos]] & 2);
+    }
+
 public:
     MIPSPipeline(const char* fileName){
         parser =  new MIPSTextParser(fileName);
         reg = new MIPSRegister;
         mem = new MIPSMemory;
+        for(int i  = 0; i < BRANCH_PREDICTOR_CACHE; ++i){
+            branchHistoryTable[i] = 0;
+            for(int j = 0; j < (1 << PREDICT_BYTE); ++j) globalPredictTable[i][j] = 0;
+        }
         //parser->display();
     }
 
@@ -141,79 +161,6 @@ private:
         //}
 #endif
         INSTRUCTION currentInst = IFID.ins->name;
-        //TODO LOCK REGISTER
-        /*if(currentInst == MFHI && reg->locker[33]){
-            DT_STALL = 1;
-        }
-        else if(currentInst == MFLO && reg->locker[32]){
-            DT_STALL = 1;
-        }
-        else if((currentInst >= ADD  && currentInst <= REMU) || (currentInst >= BEQZ && currentInst <= BLTZ) || currentInst == JR || currentInst == JALR || currentInst == MOVE){
-            if(reg->locker[IFID.ins->Rsrc]){
-                DT_STALL = 1;
-            }
-            if(IFID.ins->srcType == 1 && reg->locker[IFID.ins->Src]){
-                DT_STALL = 1;
-            }
-        }
-        else if((currentInst >= MUL && currentInst <= DIVU) || (currentInst >= SEQ && currentInst <= BLT)){
-            if(IFID.ins->argCount == 3){
-                if(reg->locker[IFID.ins->Rsrc]){
-                    DT_STALL = 1;
-                }
-                if(IFID.ins->srcType && reg->locker[IFID.ins->Src]){
-                    DT_STALL = 1;
-                }
-            }
-            else{
-                if(reg->locker[IFID.ins->Rsrc] == 1) DT_STALL = 1;
-                if(!DT_STALL && IFID.ins->srcType == 1 && reg->locker[IFID.ins->Src]){
-                    DT_STALL = 1;
-                }
-                if(!DT_STALL &&  currentInst >= MUL && currentInst <= DIVU){
-                    reg->locker[32]++;
-                    reg->locker[33]++;
-                }
-            }
-        }
-        else if(currentInst >= LA && currentInst <= LW){
-            if(IFID.ins->srcType && reg->locker[IFID.ins->Src]){
-                DT_STALL = 1;
-            }
-        }
-        else if(currentInst >= SB && currentInst <= SW){
-            if(reg->locker[IFID.ins->Rsrc]){
-                DT_STALL = 1;
-            }
-            if(IFID.ins->srcType && reg->locker[IFID.ins->Src]){
-                DT_STALL = 1;
-            }
-        }
-        else if(currentInst == SYSCALL){
-            if(reg->locker[2]){
-                DT_STALL = 1;
-            }
-            else{
-                int s = reg->getWord(2);
-                switch(s){
-                    case 5:
-                        reg->locker[2]++;
-                        break;
-                    case 9:
-                        if(reg->locker[4]){
-                            DT_STALL = 1;
-                        }
-                        else reg->locker[2]++;
-                        break;
-                    case 8:
-                        if(reg->locker[4] || reg->locker[5]){
-                            DT_STALL = 1;
-                        }
-                        break;
-                    default:break;
-                }
-            }
-        }*/
         if(currentInst == MFHI && reg->locker[33]) DT_STALL = 1;
         else if(currentInst == MFLO && reg->locker[32]) DT_STALL = 1;
         else if(currentInst == SYSCALL){
