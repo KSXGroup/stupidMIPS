@@ -433,6 +433,8 @@ public:
                             else{
                                tmpPtr->srcType = 0;
                                tmpPtr->argCount = 2;
+                               tmpPtr->Rsrc = tmpPtr->Rdest;
+                               tmpPtr->Rdest = 0;
                                linePos = getNumberFromString(tmpLine, linePos, tmpPtr->Src);
                             }
 #ifdef TEXT_DEBUG

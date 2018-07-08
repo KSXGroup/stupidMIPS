@@ -82,7 +82,7 @@ public:
 
     void runPipeline(){
         while(1){
-            WB();MA();EX();ID();IF();
+           WB();MA();EX();ID();IF();
 #ifdef LOOP_PAUSE
           cerr << "\n\n";
           cerr << "PC_STALL: " << (int)PC_STALL<< "\t" << "DT_STALL: " << (int)DT_STALL << "\n";
@@ -134,7 +134,7 @@ private:
         else IDEX.STALL = 0;
         if(IFID.ins == nullptr) return;
 #ifdef TEXT_DEBUG
-        //if(IFID.ins->lineNumer == 428){
+        //if(IFID.ins->lineNumer == 715){
             //int a = 0;
             //reg->dispRegInt();
             //for(int i = 0; i < 30; ++i) {cerr <<"[DBG] ";cerr << mem->getByte(reg->getWord(30) - 4 + i) << " ";}
@@ -214,9 +214,9 @@ private:
                 }
             }
         }*/
-        if(IFID.ins->Rsrc != 0 && reg->locker[IFID.ins->Rsrc] > 0) DT_STALL = 1;
-        if(IFID.ins->srcType == 1 && IFID.ins->Src != 0 && reg->locker[IFID.ins->Src] > 0) DT_STALL = 1;
-        if(currentInst == SYSCALL){
+        if(currentInst == MFHI && reg->locker[33]) DT_STALL = 1;
+        else if(currentInst == MFLO && reg->locker[32]) DT_STALL = 1;
+        else if(currentInst == SYSCALL){
             if(reg->locker[2]){
                 DT_STALL = 1;
             }
@@ -245,11 +245,16 @@ private:
                 }
             }
         }
+        else{
+            if(IFID.ins->Rsrc != 0 && reg->locker[IFID.ins->Rsrc]) DT_STALL = 1;
+            if(IFID.ins->srcType == 1 && IFID.ins->Src != 0 && reg->locker[IFID.ins->Src]) DT_STALL = 1;
+        }
         if(DT_STALL){
             IDEX.STALL = 1;
             return;
         }
         else IDEX.STALL = 0;
+        //currentInst = IFID.ins->name;
         IDEX.NPC = IFID.NPC;
         IDEX.ins = IFID.ins;
         IDEX.dataRs = reg->getWord(IFID.ins->Rsrc);
@@ -261,7 +266,7 @@ private:
         }
         if(IFID.ins->Rdest != 0) reg->locker[IFID.ins->Rdest]++;
         if(currentInst == JAL || currentInst == JALR) reg->locker[31]++;
-        if(!DT_STALL && currentInst >= MUL && currentInst <= DIVU && IFID.ins->argCount == 2){
+        else if(currentInst >= MUL && currentInst <= DIVU && IFID.ins->argCount == 2){
             reg->locker[32]++;
             reg->locker[33]++;
         }
@@ -293,6 +298,7 @@ private:
         EXMEM.NPC = IDEX.NPC;
         EXMEM.sysA1 = IDEX.sysA1;
         EXMEM.cond = 0;
+
         INSTRUCTION currentInst = IDEX.ins->name;
         switch(currentInst){
             case ADD:
@@ -327,7 +333,15 @@ private:
                     EXMEM.aluOutput = ((((int64_t)tmpHi) << 32) | (tmpLo & 0xffffffff));
                 }
                 else{
-                    if(IFID.ins->srcType == 0){
+#ifdef REG_DEBUG
+        if(IDEX.ins->lineNumer == 715){
+       cout << IDEX.ins->lineNumer << ": " << IDEX.ins->dispName <<" Rdest " << (int)IDEX.ins->Rdest<<"  RsrcData: " << (int)IDEX.dataRs <<"  Srctype: "<<(int)IDEX.ins->srcType<< "  ALU: " << EXMEM.aluOutput << "\n";
+       reg->dispRegIntCout();
+        //cout << MEMWB.ins->lineNumer << "\n";
+        cout << std::flush;
+        }
+#endif
+                    if(IDEX.ins->srcType == 0){
                        EXMEM.aluOutput = IDEX.dataRs / IDEX.ins->Src;
                     }
                     else{
@@ -524,7 +538,7 @@ private:
             case SYSCALL:
                 switch(IDEX.dataRs){
                    case 1:
-                        cout << IDEX.dataRt;
+                        cerr << IDEX.dataRt; //COUT CHANGED
                         break;
 
                    case 5:
@@ -603,7 +617,7 @@ private:
                             str += (char)(mem->getByte(pos));
                             ++pos;
                         }
-                        cout << str;
+                        cerr << str; //COUT CHANGED
                         break;
                     case 8:
                         cin >> str;
@@ -737,12 +751,6 @@ private:
 #ifdef LINE_PAUSE
         getchar();
 #endif
-#endif
-#ifdef REG_DEBUG
-       cout << MEMWB.ins->lineNumer << ": " << MEMWB.ins->dispName << "\n";
-       reg->dispRegIntCout();
-        /*cout << MEMWB.ins->lineNumer << "\n";
-        cout << std::flush;*/
 #endif
     }
 
