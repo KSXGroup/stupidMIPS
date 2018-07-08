@@ -414,6 +414,7 @@ public:
                                     tmpPtr->Rsrc = tmpPtr->Rdest;
                                     tmpPtr->Src = mapper.registerMapper[Rsrc1];
                                     tmpPtr->srcType = 1;
+                                    tmpPtr->Rdest = 0;
                                 }
                                 else{
                                     tmpPtr->argCount = 3;
@@ -432,6 +433,8 @@ public:
                             else{
                                tmpPtr->srcType = 0;
                                tmpPtr->argCount = 2;
+                               tmpPtr->Rsrc = tmpPtr->Rdest;
+                               tmpPtr->Rdest = 0;
                                linePos = getNumberFromString(tmpLine, linePos, tmpPtr->Src);
                             }
 #ifdef TEXT_DEBUG
@@ -571,9 +574,6 @@ public:
                         case JALR:
                         case MFHI:
                         case MFLO:
-                             if(currentInst == MFHI){
-                                    int a = 0;
-                             }
                              tmpPtr = new MIPSInstruction;
                              tmpPtr->name = currentInst;
                              tmpPtr->argCount = 1;
@@ -646,6 +646,7 @@ public:
                             }
                             else{
                                 linePos = getLabelFromString(tmpLine, linePos, label);
+                                tmpPtr->srcType = 0;
                                 if(!labelToIndex.count(label)){
                                     labels.push_back(label);
                                     labelToIndex[label] = labels.size() - 1;
