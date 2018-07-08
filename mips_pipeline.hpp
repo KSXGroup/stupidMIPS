@@ -16,6 +16,7 @@ private:
     //PIPELINE REGISTERS
     //refer to 'Computer Architecture (A Quantitive Approach)'
     BYTE PC_STALL = 0;
+    BYTE DT_STALL = 0;
     struct{
         MIPSInstruction *ins = nullptr;
         uint32_t NPC = 0;
@@ -81,25 +82,39 @@ public:
 
     void runPipeline(){
         while(1){
-            // WB();MA();EX(); ID();IF();
-            IF();ID();EX();MA();WB();
+            WB();MA();EX();ID();IF();
+#ifdef LOOP_PAUSE
+          cerr << "\n\n";
+          cerr << "PC_STALL: " << (int)PC_STALL<< "\t" << "DT_STALL: " << (int)DT_STALL << "\n";
+          getchar();
+#endif
+            //IF();ID();EX();MA();WB();
         }
     }
 private:
 
     void IF(){
         //TODO CHECK BRANCH
-        if(PC_STALL == 1){
+#ifdef PIPELINE_DEBUG
+        cerr <<"IF START" << "\n";
+#endif
+        if(DT_STALL){
+            DT_STALL = 0;
+            return;
+        }
+        if(PC_STALL){
             IFID.STALL = 1;
             return;
         }
+        else IFID.STALL = 0;
         uint32_t InstPos = reg->getWord(34);
         reg->setWord(InstPos + 1, 34);
         IFID.ins = parser->inst[InstPos];
+        IFID.STALL = 0;
         IFID.NPC = InstPos + 1;
 
 #ifdef PIPELINE_DEBUG
-         cerr <<"Line"<<parser->inst[InstPos]->lineNumer<<": "<< parser->inst[InstPos]->dispName<< " IF\n";
+        cerr <<"Line"<<parser->inst[InstPos]->lineNumer<<": "<< parser->inst[InstPos]->dispName<< " IF\n";
         reg->dispRegInt();
 #ifdef PIPELINE_PAUSE
         getchar();
@@ -109,96 +124,134 @@ private:
     }
 
     void ID(){
+#ifdef PIPELINE_DEBUG
+        cerr << "ID START" << "\n";
+#endif
+        if(IFID.STALL == 1){
+            IDEX.STALL = 1;
+            return;
+        }
+        else IDEX.STALL = 0;
         if(IFID.ins == nullptr) return;
 #ifdef TEXT_DEBUG
-        //if(IFID.ins->lineNumer == 495){
-          //  int a = 0;
+        //if(IFID.ins->lineNumer == 428){
+            //int a = 0;
             //reg->dispRegInt();
             //for(int i = 0; i < 30; ++i) {cerr <<"[DBG] ";cerr << mem->getByte(reg->getWord(30) - 4 + i) << " ";}
         //}
 #endif
-        IDEX.STALL = IFID.STALL;
-        if(IFID.STALL == 1) return;
         INSTRUCTION currentInst = IFID.ins->name;
-        BYTE sys = 0;
-        IDEX.NPC = IFID.NPC;
-        IDEX.ins = IFID.ins;
-        if(currentInst >= B && currentInst <= JALR) PC_STALL = 1;
         //TODO LOCK REGISTER
-        if(currentInst == MFHI && reg->locker[33] == 1){
-            IDEX.STALL = 1;
-            return;
+        /*if(currentInst == MFHI && reg->locker[33]){
+            DT_STALL = 1;
         }
-        else if(currentInst == MFLO && reg->locker[32] == 1){
-            IDEX.STALL = 1;
-            return;
+        else if(currentInst == MFLO && reg->locker[32]){
+            DT_STALL = 1;
         }
         else if((currentInst >= ADD  && currentInst <= REMU) || (currentInst >= BEQZ && currentInst <= BLTZ) || currentInst == JR || currentInst == JALR || currentInst == MOVE){
-            if(reg->locker[IFID.ins->Rsrc] == 1){
-                IDEX.STALL = 1;
-                return;
+            if(reg->locker[IFID.ins->Rsrc]){
+                DT_STALL = 1;
+            }
+            if(IFID.ins->srcType == 1 && reg->locker[IFID.ins->Src]){
+                DT_STALL = 1;
             }
         }
         else if((currentInst >= MUL && currentInst <= DIVU) || (currentInst >= SEQ && currentInst <= BLT)){
             if(IFID.ins->argCount == 3){
-                if(reg->locker[IFID.ins->Rsrc] == 1){
-                    IDEX.STALL = 1;
-                    return;
+                if(reg->locker[IFID.ins->Rsrc]){
+                    DT_STALL = 1;
                 }
-                if(IFID.ins->srcType == 1 && reg->locker[IFID.ins->Src] == 1){
-                    IDEX.STALL = 1;
-                    return;
+                if(IFID.ins->srcType && reg->locker[IFID.ins->Src]){
+                    DT_STALL = 1;
                 }
             }
             else{
-                if(currentInst >= MUL && currentInst <= DIVU){
-                    reg->locker[32];
-                    reg->locker[33];
+                if(reg->locker[IFID.ins->Rsrc] == 1) DT_STALL = 1;
+                if(!DT_STALL && IFID.ins->srcType == 1 && reg->locker[IFID.ins->Src]){
+                    DT_STALL = 1;
                 }
-                if(IFID.ins->srcType == 1 && reg->locker[IFID.ins->Src] == 1){
-                    IDEX.STALL = 1;
-                    return;
+                if(!DT_STALL &&  currentInst >= MUL && currentInst <= DIVU){
+                    reg->locker[32]++;
+                    reg->locker[33]++;
                 }
             }
         }
         else if(currentInst >= LA && currentInst <= LW){
-            if(IFID.ins->srcType == 1 && reg->locker[IFID.ins->Src] == 1){
-                IDEX.STALL = 1;
-                return;
+            if(IFID.ins->srcType && reg->locker[IFID.ins->Src]){
+                DT_STALL = 1;
             }
         }
         else if(currentInst >= SB && currentInst <= SW){
-            if(reg->locker[IFID.ins->Rsrc] == 1){
-                IDEX.STALL = 1;
-                return;
+            if(reg->locker[IFID.ins->Rsrc]){
+                DT_STALL = 1;
             }
-            if(IFID.ins->srcType == 1 && reg->locker[IFID.ins->Src] == 1){
-                IDEX.STALL = 1;
-                return;
+            if(IFID.ins->srcType && reg->locker[IFID.ins->Src]){
+                DT_STALL = 1;
             }
         }
-        else if(IFID.ins->Src == SYSCALL){
-            if(reg->locker[2] == 1){
-                IDEX.STALL = 1;
-                return;
+        else if(currentInst == SYSCALL){
+            if(reg->locker[2]){
+                DT_STALL = 1;
             }
-            s = reg->getByte(2);
-            switch(s){
-                case 1:
-                case 4:
-                case 9:
-                    if(reg->locker[4] == 1){
-                        IDEX.STALL = 1;
-                        return;
-                    }
-                    break;
-                case 8:
-                    if(reg->locker[4] || reg->locker[5]){
-                        IDEX.STALL = 1;
-                        return;
-                    }
+            else{
+                int s = reg->getWord(2);
+                switch(s){
+                    case 5:
+                        reg->locker[2]++;
+                        break;
+                    case 9:
+                        if(reg->locker[4]){
+                            DT_STALL = 1;
+                        }
+                        else reg->locker[2]++;
+                        break;
+                    case 8:
+                        if(reg->locker[4] || reg->locker[5]){
+                            DT_STALL = 1;
+                        }
+                        break;
+                    default:break;
+                }
+            }
+        }*/
+        if(IFID.ins->Rsrc != 0 && reg->locker[IFID.ins->Rsrc] > 0) DT_STALL = 1;
+        if(IFID.ins->srcType == 1 && IFID.ins->Src != 0 && reg->locker[IFID.ins->Src] > 0) DT_STALL = 1;
+        if(currentInst == SYSCALL){
+            if(reg->locker[2]){
+                DT_STALL = 1;
+            }
+            else{
+                int s = reg->getWord(2);
+                switch(s){
+                    case 1:
+                    case 4:
+                        if(reg->locker[4]) DT_STALL = 1;
+                        break;
+                    case 5:
+                        reg->locker[2]++;
+                        break;
+                    case 9:
+                        if(reg->locker[4]){
+                            DT_STALL = 1;
+                        }
+                        else reg->locker[2]++;
+                        break;
+                    case 8:
+                        if(reg->locker[4] || reg->locker[5]){
+                            DT_STALL = 1;
+                        }
+                        break;
+                    default:break;
+                }
             }
         }
+        if(DT_STALL){
+            IDEX.STALL = 1;
+            return;
+        }
+        else IDEX.STALL = 0;
+        IDEX.NPC = IFID.NPC;
+        IDEX.ins = IFID.ins;
         IDEX.dataRs = reg->getWord(IFID.ins->Rsrc);
         if(IFID.ins->srcType == 1) IDEX.dataRt = reg->getWord(IFID.ins->Src);
         if(currentInst == SYSCALL){
@@ -206,9 +259,15 @@ private:
             IDEX.dataRt = reg->getWord(4);
             if(IDEX.dataRs == 8) IDEX.sysA1 = reg->getWord(5);
         }
-        if(IFID.ins->Rdest != 0) reg->locker[IFID.ins->Rdest];
+        if(IFID.ins->Rdest != 0) reg->locker[IFID.ins->Rdest]++;
+        if(currentInst == JAL || currentInst == JALR) reg->locker[31]++;
+        if(!DT_STALL && currentInst >= MUL && currentInst <= DIVU && IFID.ins->argCount == 2){
+            reg->locker[32]++;
+            reg->locker[33]++;
+        }
+        if(currentInst >= BEQ && currentInst <= JALR) PC_STALL = 1;
 #ifdef PIPELINE_DEBUG
-         cerr <<"Line"<<IFID.ins->lineNumer<<": "<< IFID.ins->dispName <<" ID\n";
+        cerr <<"Line"<<IFID.ins->lineNumer<<": "<< IFID.ins->dispName <<" ID\n";
         reg->dispRegInt();
 #ifdef PIPELINE_PAUSE
         getchar();
@@ -217,9 +276,15 @@ private:
     }
 
     void EX(){
+#ifdef PIPELINE_DEBUG
+        cerr << "EX START" << "\n";
+#endif
+        if(IDEX.STALL == 1){
+           EXMEM.STALL = 1;
+           return;
+        }
+        else EXMEM.STALL = 0;
         if(IDEX.ins == nullptr) return;
-        EXMEM.STALL = IDEX.STALL;
-        if(IDEX.STALL == 1) return;
         int32_t tmpLo = 0, tmpHi = 0;
         uint32_t tmpA = 0, tmpB = 0, quotient = 0, remainder = 0;
         EXMEM.ins = IDEX.ins;
@@ -483,7 +548,7 @@ private:
         if(EXMEM.cond == 1) reg->setWord((uint32_t)EXMEM.aluOutput, 34);
         PC_STALL = 0;
 #ifdef PIPELINE_DEBUG
-         cerr <<"Line"<<IFID.ins->lineNumer<<": "<< IDEX.ins->dispName<< " EX\n";
+         cerr <<"Line"<<IDEX.ins->lineNumer<<": "<< IDEX.ins->dispName<< " EX\n";
         reg->dispRegInt();
 #ifdef PIPELINE_PAUSE
         getchar();
@@ -492,9 +557,15 @@ private:
     }
 
     void MA(){
+#ifdef PIPELINE_DEBUG
+        cerr << "MA START" << "\n";
+#endif
+        if(EXMEM.STALL == 1){
+             MEMWB.STALL = 1;
+             return;
+        }
+        else MEMWB.STALL = 0;
         if(EXMEM.ins == nullptr) return;
-        MEMWB.STALL = EXMEM.STALL;
-        if(EXMEM.STALL == 1) return;
         string str = "";
         uint32_t pos = 0;
         MEMWB.ins = EXMEM.ins;
@@ -503,7 +574,6 @@ private:
         MEMWB.dataRt = EXMEM.dataRt;
         MEMWB.NPC = EXMEM.NPC;
         MEMWB.STALL = EXMEM.STALL;
-        if(EXMEM.STALL == 1) return;
         INSTRUCTION currentInst = EXMEM.ins->name;
         switch (currentInst){
             case LB:
@@ -552,7 +622,7 @@ private:
             default: break;
         }
 #ifdef PIPELINE_DEBUG
-        cerr <<"Line"<<IFID.ins->lineNumer<<": "<<IFID.ins->dispName<<" MA\n";
+        cerr <<"Line"<<EXMEM.ins->lineNumer<<": "<<EXMEM.ins->dispName<<" MA\n";
 #ifdef PIPELINE_PAUSE
         getchar();
 #endif
@@ -560,8 +630,11 @@ private:
     }
 
     void WB(){
-        if(MEMWB.ins == nullptr) return;
+#ifdef PIPELINE_DEBUG
+        cerr << "WB START" << "\n";
+#endif
         if(MEMWB.STALL == 1) return;
+        if(MEMWB.ins == nullptr) return;
         uint32_t tmpHi = 0, tmpLo = 0;
         INSTRUCTION currentInst = MEMWB.ins->name;
         switch(currentInst){
@@ -583,7 +656,7 @@ private:
             case SLT:
             case SNE:
                 reg->setWord(MEMWB.aluOutput, MEMWB.ins->Rdest);
-                reg->locker[MEMWB.ins->Rdest] = 0;
+                reg->locker[MEMWB.ins->Rdest]--;
                 break;
             case MUL:
             case MULU:
@@ -594,68 +667,69 @@ private:
                     tmpHi = (MEMWB.aluOutput >> 32);
                     reg->setWord(tmpHi, 33);
                     reg->setWord(tmpLo, 32);
-                    reg->locker[32] = 0;
-                    reg->locker[33] = 0;
+                    reg->locker[32]--;
+                    reg->locker[33]--;
                 }
                 else{
                     reg->setWord(MEMWB.aluOutput, MEMWB.ins->Rdest);
-                    reg->locker[MEMWB.ins->Rdest] = 0;
+                    reg->locker[MEMWB.ins->Rdest]--;
                 }
                 break;
             case LA:
                 reg->setWord(MEMWB.aluOutput, MEMWB.ins->Rdest);
-                 reg->locker[MEMWB.ins->Rdest] = 0;
+                reg->locker[MEMWB.ins->Rdest]--;
                 break;
             case LB:
                 reg->setByte(MEMWB.lmd, MEMWB.ins->Rdest);
-                 reg->locker[MEMWB.ins->Rdest] = 0;
+                 reg->locker[MEMWB.ins->Rdest]--;
                 break;
             case LH:
                 reg->setHalf(MEMWB.lmd, MEMWB.ins->Rdest);
-                 reg->locker[MEMWB.ins->Rdest] = 0;
+                 reg->locker[MEMWB.ins->Rdest]--;
                 break;
             case LW:
                 reg->setWord(MEMWB.lmd, MEMWB.ins->Rdest);
-                 reg->locker[MEMWB.ins->Rdest] = 0;
+                 reg->locker[MEMWB.ins->Rdest]--;
                 break;
             case MOVE:
                 reg->setWord(MEMWB.dataRs, MEMWB.ins->Rdest);
-                 reg->locker[MEMWB.ins->Rdest] = 0;
+                 reg->locker[MEMWB.ins->Rdest]--;
                 break;
             case MFHI:
                 reg->setWord(reg->getWord(33), MEMWB.ins->Rdest);
-                 reg->locker[MEMWB.ins->Rdest] = 0;
+                 reg->locker[MEMWB.ins->Rdest]--;
                 break;
             case MFLO:
                 reg->setWord(reg->getWord(32), MEMWB.ins->Rdest);
-                 reg->locker[MEMWB.ins->Rdest] = 0;
+                 reg->locker[MEMWB.ins->Rdest]--;
                 break;
             case JAL:
             case JALR:
-                reg->setWord(MEMWB.NPC, 31);
-                 reg->locker[31] = 0;
+                 reg->setWord(MEMWB.NPC, 31);
+                 reg->locker[31]--;
                 break;
             case LI:
                 reg->setWord(MEMWB.ins->Src, MEMWB.ins->Rdest);
-                 reg->locker[MEMWB.ins->Rdest] = 0;
+                reg->locker[MEMWB.ins->Rdest]--;
                 break;
             case SYSCALL:
                 switch(MEMWB.dataRs){
                     case 5:
                         reg->setWord(MEMWB.aluOutput, 2);
+                        reg->locker[2]--;
                         break;
                     case 9:
                         reg->setWord(MEMWB.sysV0, 2);
+                        reg->locker[2]--;
                         break;
                     default: break;
                 }
-                 reg->locker[MEMWB.ins->Rdest] = 0;
-            break;
+                break;
             default:
                 break;
         }
 #ifdef PIPELINE_DEBUG
-       cerr <<"Line"<<IFID.ins->lineNumer<<": "<<IFID.ins->dispName<<" WB\n";
+        cerr <<"Line"<<MEMWB.ins->lineNumer<<": "<<MEMWB.ins->dispName<<" WB\n";
         reg->dispRegInt();
 #ifdef PIPELINE_PAUSE
         getchar();
@@ -663,6 +737,12 @@ private:
 #ifdef LINE_PAUSE
         getchar();
 #endif
+#endif
+#ifdef REG_DEBUG
+       cout << MEMWB.ins->lineNumer << ": " << MEMWB.ins->dispName << "\n";
+       reg->dispRegIntCout();
+        /*cout << MEMWB.ins->lineNumer << "\n";
+        cout << std::flush;*/
 #endif
     }
 

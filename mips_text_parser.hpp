@@ -414,6 +414,7 @@ public:
                                     tmpPtr->Rsrc = tmpPtr->Rdest;
                                     tmpPtr->Src = mapper.registerMapper[Rsrc1];
                                     tmpPtr->srcType = 1;
+                                    tmpPtr->Rdest = 0;
                                 }
                                 else{
                                     tmpPtr->argCount = 3;
@@ -643,6 +644,7 @@ public:
                             }
                             else{
                                 linePos = getLabelFromString(tmpLine, linePos, label);
+                                tmpPtr->srcType = 0;
                                 if(!labelToIndex.count(label)){
                                     labels.push_back(label);
                                     labelToIndex[label] = labels.size() - 1;

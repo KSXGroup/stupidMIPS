@@ -2,10 +2,12 @@
 #define _MIPS_DEFINE_H_
 //#define PIPELINE_DEBUG
 //#define LINE_PAUSE
+//#define LOOP_PAUSE
 //#define PIPELINE_PAUSE
 //#define STATIC_DATA_DEBUG
-#define TEXT_DEBUG
+//#define TEXT_DEBUG
 //#define PARSED_PROGRAM_DEBUG
+//#define REG_DEBUG
 #include <iostream>
 #include <fstream>
 #include <map>
@@ -26,8 +28,8 @@ const BYTE STATUS_TEXT = 4;
 enum INSTRUCTION{
     ADD = 0, ADDU, ADDIU, SUB, SUBU, XOR, XORU, NEG, NEGU, REM, REMU ,MUL, MULU, DIV, DIVU,
     LI,
-    SEQ, SGE, SGT, SLE, SLT, SNE, B, BEQ, BNE, BGE,BLE, BGT, BLT, BEQZ, BNEZ, BLEZ, BGEZ, BGTZ, BLTZ,
-    J, JR, JAL,JALR,
+    SEQ, SGE, SGT, SLE, SLT, SNE,BEQ, BNE, BGE,BLE, BGT, BLT, BEQZ, BNEZ, BLEZ, BGEZ, BGTZ, BLTZ, B,
+    J, JR, JAL, JALR,
     LA, LB, LH, LW,
     SB, SH, SW,
     MOVE, MFHI, MFLO,
