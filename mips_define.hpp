@@ -20,7 +20,7 @@ using std::map;
 typedef unsigned char BYTE;
 typedef unsigned int OFFSETTYPE;
 const unsigned int MAX_MEMORY_SIZE = 1024 * 1024 * 4;
-const unsigned int BRANCH_PREDICTOR_CACHE = 8800;
+const unsigned int BRANCH_PREDICTOR_CACHE = 12000;
 const unsigned char PREDICT_BYTE = 8;
 const BYTE TYPE_R = 0;
 const BYTE TYPE_L = 1;
