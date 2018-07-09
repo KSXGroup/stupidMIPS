@@ -498,9 +498,11 @@ private:
                         break;
                     case 10:
                         //exit = 1;
+                        cout << (double)successCount / jumpCount;
                         exit(0);
                         break;
                     case 17:
+                        cout << (double)successCount / jumpCount;
                         exit(IDEX.dataRt);
                         //exit = 1;
                         //rtv = IDEX.dataRt; // rt = $a0
