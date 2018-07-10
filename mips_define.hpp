@@ -5,7 +5,7 @@
 //#define LOOP_PAUSE
 //#define PIPELINE_PAUSE
 //#define STATIC_DATA_DEBUG
-//#define TEXT_DEBUG
+#define TEXT_DEBUG
 //#define PARSED_PROGRAM_DEBUG
 //#define REG_DEBUG
 #include <iostream>
