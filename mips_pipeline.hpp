@@ -19,6 +19,7 @@ private:
     //refer to 'Computer Architecture (A Quantitive Approach)'
     BYTE PC_STALL = 0;
     BYTE DT_STALL = 0;
+    unsigned long long jumpCount = 0, successCount = 0;
     struct{
         MIPSInstruction *ins = nullptr;
         uint32_t NPC = 0;
@@ -32,6 +33,7 @@ private:
         int32_t dataRt = 0;
         int32_t sysA1 = 0;
         BYTE STALL = 0;
+        BYTE prediction = 0;
     }IDEX;
 
     struct{
@@ -63,12 +65,12 @@ private:
         globalPredictTable[insPos][branchHistoryTable[insPos]] &= 3;
         globalPredictTable[insPos][branchHistoryTable[insPos]] += bool(ifTaken);
         branchHistoryTable[insPos] <<=1;
-        branchHistoryTable[insPos] &= 0xf;
+        branchHistoryTable[insPos] &= ((1 << PREDICT_BYTE) - 1);
         branchHistoryTable[insPos] += bool(ifTaken);
     }
 
     inline char getPrediction(const int &insPos){
-        return bool(globalPredictTable[insPos][branchHistoryTable[insPos]] & 2);
+        return bool(((globalPredictTable[insPos][branchHistoryTable[insPos]]) & 2));
     }
 
 public:
@@ -217,7 +219,19 @@ private:
             reg->locker[32]++;
             reg->locker[33]++;
         }
-        if(currentInst >= BEQ && currentInst <= JALR) PC_STALL = 1;
+        if(currentInst >= BEQ && currentInst <= JALR){
+           IDEX.prediction = getPrediction(IFID.NPC - 1);
+           if(IDEX.prediction){
+               if(IFID.ins->name == JR || IFID.ins->name == JALR){
+                   reg->setWord(IDEX.dataRs, 34);
+               }
+               else{
+                   reg->setWord(IDEX.ins->addressedLabel, 34);
+               }
+           }
+           PC_STALL = 0;
+        }
+        //if(currentInst >= BEQ && currentInst <= JALR) PC_STALL = 1;
 #ifdef PIPELINE_DEBUG
         cerr <<"Line"<<IFID.ins->lineNumer<<": "<< IFID.ins->dispName <<" ID\n";
         reg->dispRegInt();
@@ -408,7 +422,7 @@ private:
                 if(IDEX.ins->srcType == 0) EXMEM.cond = (IDEX.dataRs >= IDEX.ins->Src);
                 else EXMEM.cond = (IDEX.dataRs >= IDEX.dataRt);
                 EXMEM.aluOutput = IDEX.ins->addressedLabel;
-                break;
+                break;reg->setWord((uint32_t)EXMEM.aluOutput, 34);
             case BLE:
                 if(IDEX.ins->srcType == 0) EXMEM.cond = (IDEX.dataRs <= IDEX.ins->Src);
                 else EXMEM.cond = (IDEX.dataRs <= IDEX.dataRt);
@@ -453,15 +467,6 @@ private:
             case JAL:
                 EXMEM.aluOutput = IDEX.ins->addressedLabel;
                 EXMEM.cond = 1;
-                if(EXMEM.aluOutput == -1){
-#ifdef PIPELINE_DEBUG
-                    cerr << "\n\nB FUCK! NO LABEL!\n\n";
-#ifdef PIPELINE_PAUSE
-        getchar();
-#endif
-#endif
-                    exit(0);
-                }
                 break;
             case JR:
             case JALR:
@@ -493,9 +498,11 @@ private:
                         break;
                     case 10:
                         //exit = 1;
+                        cout << (double)successCount / jumpCount;
                         exit(0);
                         break;
                     case 17:
+                        cout << (double)successCount / jumpCount;
                         exit(IDEX.dataRt);
                         //exit = 1;
                         //rtv = IDEX.dataRt; // rt = $a0
@@ -506,8 +513,33 @@ private:
 
              default: break;
             }
-        if(EXMEM.cond == 1) reg->setWord((uint32_t)EXMEM.aluOutput, 34);
-        PC_STALL = 0;
+        //if(EXMEM.cond == 1) reg->setWord((uint32_t)EXMEM.aluOutput, 34);
+        if(IDEX.ins->name <= JALR  && IDEX.ins->name >= BEQ){
+            jumpCount++;
+            if(EXMEM.cond && !IDEX.prediction){
+#ifdef PREDICTION_DEBUG
+                cerr << "Prediction Failure, set to Result\n";
+#endif
+                reg->setWord((uint32_t)EXMEM.aluOutput, 34);
+                IFID.STALL = 1;
+            }
+            else if(!EXMEM.cond && IDEX.prediction){
+#ifdef PREDICTION_DEBUG
+                cerr << "Prediction Failure, set to NPC\n";
+#endif
+                reg->setWord((uint32_t)IDEX.NPC, 34);
+                IFID.STALL = 1;
+            }
+            else{
+#ifdef PREDICTION_DEBUG
+                cerr << "Prediction Success\n";
+#endif
+                successCount++;
+            }
+            insHistory(IDEX.NPC - 1, (bool)EXMEM.cond);
+            PC_STALL = 0;
+        }
+        //PC_STALL = 0;
 #ifdef PIPELINE_DEBUG
          cerr <<"Line"<<IDEX.ins->lineNumer<<": "<< IDEX.ins->dispName<< " EX\n";
         reg->dispRegInt();
